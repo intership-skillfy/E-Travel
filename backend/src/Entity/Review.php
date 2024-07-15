@@ -26,6 +26,13 @@ class Review
     #[ORM\Column(type: Types::ARRAY, nullable: true)]
     private ?array $images = null;
 
+    #[ORM\ManyToOne(inversedBy: 'reviews')]
+    private ?Client $client = null;
+
+    #[ORM\ManyToOne(inversedBy: 'review')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Offer $offer = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -75,6 +82,30 @@ class Review
     public function setImages(?array $images): static
     {
         $this->images = $images;
+
+        return $this;
+    }
+
+    public function getClient(): ?Client
+    {
+        return $this->client;
+    }
+
+    public function setClient(?Client $client): static
+    {
+        $this->client = $client;
+
+        return $this;
+    }
+
+    public function getOffer(): ?Offer
+    {
+        return $this->offer;
+    }
+
+    public function setOffer(?Offer $offer): static
+    {
+        $this->offer = $offer;
 
         return $this;
     }

@@ -29,6 +29,15 @@ class GuideArticle
     #[ORM\Column(type: Types::ARRAY)]
     private array $images = [];
 
+    #[ORM\ManyToOne(inversedBy: 'article')]
+    private ?Agency $agency = null;
+
+    #[ORM\ManyToOne(inversedBy: 'article')]
+    private ?Admin $admin_article = null;
+
+    #[ORM\ManyToOne(inversedBy: 'article')]
+    private ?Client $client = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -90,6 +99,42 @@ class GuideArticle
     public function setImages(array $images): static
     {
         $this->images = $images;
+
+        return $this;
+    }
+
+    public function getAgency(): ?Agency
+    {
+        return $this->agency;
+    }
+
+    public function setAgency(?Agency $agency): static
+    {
+        $this->agency = $agency;
+
+        return $this;
+    }
+
+    public function getAdminArticle(): ?Admin
+    {
+        return $this->admin_article;
+    }
+
+    public function setAdminArticle(?Admin $admin_article): static
+    {
+        $this->admin_article = $admin_article;
+
+        return $this;
+    }
+
+    public function getAgent(): ?Agent
+    {
+        return $this->agent;
+    }
+
+    public function setAgent(?Agent $agent): static
+    {
+        $this->agent = $agent;
 
         return $this;
     }
