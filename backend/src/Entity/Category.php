@@ -21,7 +21,7 @@ class Category
     /**
      * @var Collection<int, Offer>
      */
-    #[ORM\OneToMany(targetEntity: Offer::class, mappedBy: 'category')]
+    #[ORM\OneToMany(targetEntity: Offer::class, mappedBy: 'category', cascade: ['remove'])]
     private Collection $offers;
 
     public function __construct()

@@ -30,17 +30,17 @@ class Offer
     #[ORM\Column(length: 255)]
     private ?string $destination = null;
 
-    #[ORM\Column]
+    #[ORM\Column(type: 'float')]
     private ?float $price = null;
 
-    #[ORM\Column]
-    private ?\DateTimeImmutable $updateAt = null;
+    #[ORM\Column(type: 'datetime_immutable')]
+    private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'offers')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Category $category = null;
 
-    #[ORM\Column]
+    #[ORM\Column(type: 'integer')]
     private ?int $capacity = null;
 
     /**
@@ -56,16 +56,16 @@ class Offer
      * @var Collection<int, Review>
      */
     #[ORM\OneToMany(targetEntity: Review::class, mappedBy: 'offer')]
-    private Collection $review;
+    private Collection $reviews;
 
     #[ORM\ManyToOne(inversedBy: 'offers')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: true)]
     private ?Agency $agency = null;
 
     public function __construct()
     {
         $this->reservations = new ArrayCollection();
-        $this->review = new ArrayCollection();
+        $this->reviews = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -145,14 +145,14 @@ class Offer
         return $this;
     }
 
-    public function getUpdateAt(): ?\DateTimeImmutable
+    public function getUpdatedAt(): ?\DateTimeImmutable
     {
-        return $this->updateAt;
+        return $this->updatedAt;
     }
 
-    public function setUpdateAt(\DateTimeImmutable $updateAt): static
+    public function setUpdatedAt(\DateTimeImmutable $updatedAt): static
     {
-        $this->updateAt = $updateAt;
+        $this->updatedAt = $updatedAt;
 
         return $this;
     }
@@ -223,15 +223,15 @@ class Offer
     /**
      * @return Collection<int, Review>
      */
-    public function getReview(): Collection
+    public function getReviews(): Collection
     {
-        return $this->review;
+        return $this->reviews;
     }
 
     public function addReview(Review $review): static
     {
-        if (!$this->review->contains($review)) {
-            $this->review->add($review);
+        if (!$this->reviews->contains($review)) {
+            $this->reviews->add($review);
             $review->setOffer($this);
         }
 
@@ -240,24 +240,12 @@ class Offer
 
     public function removeReview(Review $review): static
     {
-        if ($this->review->removeElement($review)) {
+        if ($this->reviews->removeElement($review)) {
             // set the owning side to null (unless already changed)
             if ($review->getOffer() === $this) {
                 $review->setOffer(null);
             }
         }
-
-        return $this;
-    }
-
-    public function getAgence(): ?Agence
-    {
-        return $this->agence;
-    }
-
-    public function setAgence(?Agence $agence): static
-    {
-        $this->agence = $agence;
 
         return $this;
     }
