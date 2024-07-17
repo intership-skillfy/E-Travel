@@ -240,4 +240,17 @@ class OfferController extends AbstractController
         return new JsonResponse($responseArray);
     }
 
+    #[Route('/api/offer/delete/{id}', name: 'app_offer_delete', methods: ['DELETE'])]
+    #[OA\Tag(name: 'Offer')]
+    public function delete(EntityManagerInterface $entityManager, int $id): JsonResponse
+    {
+        $offer = $entityManager->getRepository(Offer::class)->find($id);
+        if (!$offer) {
+            return new JsonResponse(['error' => 'Offer not found'], JsonResponse::HTTP_NOT_FOUND);
+        }
+        $entityManager->remove($offer);
+        $entityManager->flush();
+        return new JsonResponse(['success' => true]);
+    }
+
 }
