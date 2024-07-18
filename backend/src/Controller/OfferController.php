@@ -112,7 +112,6 @@ class OfferController extends AbstractController
             return new JsonResponse(['error' => 'Category not found'], JsonResponse::HTTP_NOT_FOUND);
         }
 
-        // Create new offer entity
         $offer = new Offer();
         $offer->setTitle($requestData['title']);
         $offer->setCategory($category);
@@ -125,14 +124,11 @@ class OfferController extends AbstractController
         $offer->setCapacity($requestData['capacity']);
         $offer->setAgency(null);
 
-        // Add offer to category
         $category->addOffer($offer);
 
-        // Persist the entities
         $entityManager->persist($offer);
         $entityManager->flush();
 
-        // Prepare response data
         $responseArray = [
             'success' => true,
             'offer' => [
