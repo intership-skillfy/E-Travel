@@ -27,6 +27,13 @@ class CategoryController extends AbstractController
             items: new OA\Items(ref: new Model(type: Category::class, groups: ['full']))
         )
     )]
+    #[OA\Parameter(
+        name : "Authorization",
+        in : "header",
+        required :true,
+        description: "Bearer token"
+        ),
+    ]
     public function index(CategoryRepository $categoryRepository): JsonResponse
     {
         $categories = $categoryRepository->findAll();
