@@ -16,8 +16,8 @@ class History
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(type: Types::ARRAY, nullable: true)]
-    private ?array $searchHistory = null;
+    #[ORM\Column(type: Types::JSON, nullable: true)]
+    private ?array $search_history = null;
 
     #[ORM\OneToOne(inversedBy: 'history', cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false)]
@@ -41,12 +41,12 @@ class History
 
     public function getSearchHistory(): ?array
     {
-        return $this->searchHistory;
+        return $this->search_history;
     }
 
-    public function setSearchHistory(?array $searchHistory): static
+    public function setSearchHistory(?array $search_history): static
     {
-        $this->searchHistory = $searchHistory;
+        $this->search_history = $search_history;
 
         return $this;
     }
