@@ -48,6 +48,7 @@ security:
         - { path: ^/api/admin, roles: ROLE_ADMIN }
         - { path: ^/api/agency, roles: ROLE_AGENCY }
         - { path: ^/api/agent, roles: ROLE_AGENT }
+        - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
 
 when@test:
     security:
