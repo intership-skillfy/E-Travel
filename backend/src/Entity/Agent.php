@@ -22,11 +22,6 @@ class Agent extends User
         $this->article = new ArrayCollection();
     }
 
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
-
     public function getPhone(): ?string
     {
         return $this->phone;

@@ -49,18 +49,15 @@ class AuthController extends AbstractController
         $data = json_decode($request->getContent(), true);
         $role = $data['role'] ?? null;
 
-        // Validate the presence of email, password, and role
         if (!$data['email'] || !$data['password'] || !$role) {
             return new JsonResponse(['message' => 'Email, password, and role are required.'], Response::HTTP_BAD_REQUEST);
         }
 
-        // Check if the email already exists
         $existingUser = $userRepository->findOneBy(['email' => $data['email']]);
         if ($existingUser) {
             return new JsonResponse(['message' => 'Email address already exists.'], Response::HTTP_CONFLICT);
         }
 
-        // Create the appropriate entity based on the role
         if ($role === 'ROLE_ADMIN') {
             $user = new Admin();
         } elseif ($role === 'ROLE_CLIENT') {
@@ -86,7 +83,6 @@ class AuthController extends AbstractController
         $entityManager->persist($user);
         $entityManager->flush();
 
-        // Generate JWT token
         try {
             $token = $jwtManager->create($user);
         } catch (BadCredentialsException $e) {
@@ -125,7 +121,6 @@ class AuthController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
 
-        // Validate request data
         if (!isset($data['email']) || !isset($data['password'])) {
             return new JsonResponse(['message' => 'Email and password are required.'], Response::HTTP_BAD_REQUEST);
         }
@@ -135,18 +130,14 @@ class AuthController extends AbstractController
             return new JsonResponse(['message' => 'Invalid email.'], Response::HTTP_CONFLICT);
         }
 
-        // Attempt to fetch the user from database
         $user = $repository->findOneBy(['email' => $data['email']]);
 
-        // If user not found or password incorrect, return error
         if (!$user || !$passwordHasher->isPasswordValid($user, $data['password'])) {
             throw new BadCredentialsException('Invalid credentials.');
         }
 
-        // Generate JWT token
         $token = $jwtManager->create($user);
 
-        // Return token to the client
         return new JsonResponse(['token' => $token], Response::HTTP_OK);
     }
 }

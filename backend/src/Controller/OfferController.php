@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Category;
 use App\Entity\Offer;
 use App\Repository\OfferRepository;
+use App\Service\SerializerService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -27,24 +28,10 @@ class OfferController extends AbstractController
             items: new OA\Items(ref: new Model(type: Offer::class, groups: ['full']))
         )
     )]
-    public function index(OfferRepository $offerRepository): JsonResponse
+    public function index(OfferRepository $offerRepository, SerializerService $serializerService): JsonResponse
     {
         $offers = $offerRepository->findAll();
-        $offersArray = [];
-        foreach ($offers as $offer) {
-            $offersArray[] = [
-                'id' => $offer->getId(),
-                'title' => $offer->getTitle(),
-                'category' => $offer->getCategory()->getName(),
-                'description' => $offer->getDescription(),
-                'startDate' => $offer->getStartDate()->format('Y-m-d H:i:s'),
-                'endDate' => $offer->getEndDate()->format('Y-m-d H:i:s'),
-                'price' => $offer->getPrice(),
-                'destination' => $offer->getDestination(),
-                'updatedAt' => $offer->getUpdatedAt()->format('Y-m-d H:i:s'),
-                'capacity' => $offer->getCapacity(),
-            ];
-        }
+        $offersArray = $serializerService->serializeArray($offers);
 
         $responseArray = [
             'success' => true,
@@ -71,7 +58,7 @@ class OfferController extends AbstractController
             ],
         )
     )]
-    public function new(Request $request, EntityManagerInterface $entityManager): JsonResponse
+    public function new(Request $request, EntityManagerInterface $entityManager, SerializerService $serializerService): JsonResponse
     {
         $requestData = json_decode($request->getContent(), true);
 
@@ -131,18 +118,7 @@ class OfferController extends AbstractController
 
         $responseArray = [
             'success' => true,
-            'offer' => [
-                'id' => $offer->getId(),
-                'title' => $offer->getTitle(),
-                'category' => $category->getName(),
-                'description' => $offer->getDescription(),
-                'startDate' => $offer->getStartDate()->format('Y-m-d H:i:s'),
-                'endDate' => $offer->getEndDate()->format('Y-m-d H:i:s'),
-                'price' => $offer->getPrice(),
-                'destination' => $offer->getDestination(),
-                'updatedAt' => $offer->getUpdatedAt()->format('Y-m-d H:i:s'),
-                'capacity' => $offer->getCapacity(),
-            ],
+            'offer' => $serializerService->serialize($offer),
         ];
         return new JsonResponse($responseArray);
     }
@@ -165,7 +141,7 @@ class OfferController extends AbstractController
             ],
         )
     )]
-    public function edit(Request $request, EntityManagerInterface $entityManager, int $id): JsonResponse
+    public function edit(Request $request, EntityManagerInterface $entityManager, int $id, SerializerService $serializerService): JsonResponse
     {
         $requestData = json_decode($request->getContent(), true);
 
@@ -220,18 +196,7 @@ class OfferController extends AbstractController
 
         $responseArray = [
             'success' => true,
-            'offer' => [
-                'id' => $offer->getId(),
-                'title' => $offer->getTitle(),
-                'category' => $offer->getCategory()->getName(),
-                'description' => $offer->getDescription(),
-                'startDate' => $offer->getStartDate()->format('Y-m-d H:i:s'),
-                'endDate' => $offer->getEndDate()->format('Y-m-d H:i:s'),
-                'price' => $offer->getPrice(),
-                'destination' => $offer->getDestination(),
-                'updatedAt' => $offer->getUpdatedAt()->format('Y-m-d H:i:s'),
-                'capacity' => $offer->getCapacity(),
-            ],
+            'offer' => $serializerService->serialize($offer),
         ];
         return new JsonResponse($responseArray);
     }
