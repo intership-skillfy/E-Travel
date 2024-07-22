@@ -15,6 +15,11 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\Serializer\SerializerInterface;
+use OpenApi\Attributes as OA;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Annotation\Security;
+
+#[Route('/api/reservations')]
 
 class ReservationController extends AbstractController
 {
@@ -39,24 +44,57 @@ class ReservationController extends AbstractController
     }
 
 
-    #[Route('/reservations', name: 'list_reservations', methods: ["GET"])]
+    #[Route('/', name: 'list_reservations', methods: ["GET"])]
+    #[OA\Tag(name: 'Reservation')]
+    #[OA\Response(
+        response: 200,
+        description: 'Returns list of reservations',
+        content: new OA\JsonContent(
+            type: 'array',
+            items: new OA\Items(ref: new Model(type: Reservation::class, groups: ['full']))
+        )
+    )]
     public function listReservations(): JsonResponse
     {
         $reservations = $this->reservationRepository->findAll();
-        return $this->json($reservations, 200, []);
+        return new JsonResponse($reservations);
     }
 
-    #[Route('/reservations/{id}', name: 'get_reservation', methods: ["GET"])]
+    #[Route('/{id}', name: 'get_reservation', methods: ["GET"])]
+    #[OA\Tag(name:'Reservation')]
+    #[OA\Response(
+        response: 200,
+        description: 'Returns a reservation',
+        content: new OA\JsonContent(
+            type: 'array',
+            items: new OA\Items(ref: new Model(type: Reservation::class, groups: ['full']))
+        )
+    )]
+
     public function getReservation(int $id): JsonResponse
     {
         $reservation = $this->reservationRepository->find($id);
         if (!$reservation) {
             return $this->json(['message' => 'Reservation not found'], 404);
         }
-        return $this->json($reservation, 200, []);
+        return new JsonResponse($reservation);
     }
 
-    #[Route('/reservations', name: 'create_reservation', methods: ["POST"])]
+    #[Route('/', name: 'create_reservation', methods: ["POST"])]
+    #[OA\Tag(name:'Reservation')]
+    #[OA\RequestBody(
+        required: true,
+        description: 'create a reservation',
+        content: new OA\JsonContent(
+            type: Object::class,
+            example: [
+                "reservationDate" => "2024-07-17T10:00:00Z",
+                "amount" => 1000,
+                "status" => "confirmed",
+                "nbrperson" => 3,
+            ],        )
+    )]
+
     public function createReservation(Request $request): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
@@ -91,7 +129,20 @@ class ReservationController extends AbstractController
         return $this->json($reservation, 200, []);
     }
 
-    #[Route('/reservations/{id}', name: 'update_reservation', methods: ["PUT", "PATCH"])]
+    #[Route('/{id}', name: 'update_reservation', methods: ["PUT", "PATCH"])]
+    #[OA\Tag(name:'Reservation')]
+    #[OA\RequestBody(
+        required: true,
+        description: 'create a reservation',
+        content: new OA\JsonContent(
+            type: Object::class,
+            example: [
+                "reservationDate" => "2024-07-17T10:00:00Z",
+                "amount" => 1000,
+                "status" => "canceled",
+                "nbrperson" => 3,
+            ]        )
+    )]
     public function updateReservation(Request $request, int $id): JsonResponse
     {
         $reservation = $this->reservationRepository->find($id);
@@ -124,7 +175,9 @@ class ReservationController extends AbstractController
         return $this->json($reservation, 200, []);
     }
 
-    #[Route('/reservations/{id}', name: 'delete_reservation', methods: ["DELETE"])]
+    #[Route('/{id}', name: 'delete_reservation', methods: ["DELETE"])]
+    #[OA\Tag(name: 'Reservation')]
+
     public function deleteReservation(int $id): JsonResponse
     {
         $reservation = $this->reservationRepository->find($id);
@@ -145,7 +198,9 @@ class ReservationController extends AbstractController
         return $this->json(['message' => 'Reservation deleted successfully'], 204);
     }
 
-    #[Route('/reservations/{id}/status', name: 'update_reservation_status', methods: ["PATCH"])]
+    #[Route('/{id}/status', name: 'update_reservation_status', methods: ["PATCH"])]
+    #[OA\Tag(name: 'Reservation')]
+
     public function updateReservationStatus(Request $request, int $id): JsonResponse
     {
         $reservation = $this->reservationRepository->find($id);
@@ -171,6 +226,6 @@ class ReservationController extends AbstractController
         }
 
         $this->entityManager->flush();
-        return $this->json($reservation, 200, []);
+        return new JsonResponse($reservation);
     }
 }
