@@ -23,11 +23,6 @@ class Admin extends User
         $this->article = new ArrayCollection();
     }
 
-    public function getId(): ?int
-             {
-                 return $this->id;
-             }
-
     /**
      * @return Collection<int, GuideArticle>
      */
