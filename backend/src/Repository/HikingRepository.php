@@ -2,39 +2,39 @@
 
 namespace App\Repository;
 
-use App\Entity\Offere;
+use App\Entity\Hiking;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Offre>
+ * @extends ServiceEntityRepository<Hiking>
  */
-class OffreRepository extends ServiceEntityRepository
+class HikingRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Offre::class);
+        parent::__construct($registry, Hiking::class);
     }
 
     //    /**
-    //     * @return Offre[] Returns an array of Offre objects
+    //     * @return Hiking[] Returns an array of Hiking objects
     //     */
     //    public function findByExampleField($value): array
     //    {
-    //        return $this->createQueryBuilder('o')
-    //            ->andWhere('o.exampleField = :val')
+    //        return $this->createQueryBuilder('h')
+    //            ->andWhere('h.exampleField = :val')
     //            ->setParameter('val', $value)
-    //            ->orderBy('o.id', 'ASC')
+    //            ->orderBy('h.id', 'ASC')
     //            ->setMaxResults(10)
     //            ->getQuery()
     //            ->getResult()
     //        ;
     //    }
 
-    //    public function findOneBySomeField($value): ?Offre
+    //    public function findOneBySomeField($value): ?Hiking
     //    {
-    //        return $this->createQueryBuilder('o')
-    //            ->andWhere('o.exampleField = :val')
+    //        return $this->createQueryBuilder('h')
+    //            ->andWhere('h.exampleField = :val')
     //            ->setParameter('val', $value)
     //            ->getQuery()
     //            ->getOneOrNullResult()

@@ -24,11 +24,6 @@ class Reservation
     #[ORM\Column(length: 255)]
     private ?string $status = null;
 
-    /**
-     * @var Collection<int, Offer>
-     */
-    #[ORM\ManyToMany(targetEntity: Offer::class, inversedBy: 'reservations')]
-    private Collection $offers;
 
     #[ORM\ManyToOne(inversedBy: 'reservations')]
     private ?Client $client = null;
@@ -44,7 +39,6 @@ class Reservation
 
     public function __construct()
     {
-        $this->offers = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -84,30 +78,6 @@ class Reservation
     public function setStatus(string $status): static
     {
         $this->status = $status;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Offer>
-     */
-    public function getOffers(): Collection
-    {
-        return $this->offers;
-    }
-
-    public function addOffer(Offer $offer): static
-    {
-        if (!$this->offers->contains($offer)) {
-            $this->offers->add($offer);
-        }
-
-        return $this;
-    }
-
-    public function removeOffer(Offer $offer): static
-    {
-        $this->offers->removeElement($offer);
 
         return $this;
     }

@@ -24,11 +24,7 @@ class Pack
     #[ORM\OneToOne(mappedBy: 'pack', cascade: ['persist', 'remove'])]
     private ?Reservation $reservation = null;
 
-    /**
-     * @var Collection<int, Offer>
-     */
-    #[ORM\OneToMany(targetEntity: Offer::class, mappedBy: 'pack')]
-    private Collection $offers;
+ 
 
     #[ORM\OneToOne(inversedBy: 'pack', cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false)]
@@ -36,7 +32,6 @@ class Pack
 
     public function __construct()
     {
-        $this->offers = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -90,35 +85,7 @@ class Pack
         return $this;
     }
 
-    /**
-     * @return Collection<int, Offer>
-     */
-    public function getOffers(): Collection
-    {
-        return $this->offers;
-    }
-
-    public function addOffer(Offer $offer): static
-    {
-        if (!$this->offers->contains($offer)) {
-            $this->offers->add($offer);
-            $offer->setPack($this);
-        }
-
-        return $this;
-    }
-
-    public function removeOffer(Offer $offer): static
-    {
-        if ($this->offers->removeElement($offer)) {
-            // set the owning side to null (unless already changed)
-            if ($offer->getPack() === $this) {
-                $offer->setPack(null);
-            }
-        }
-
-        return $this;
-    }
+    
 
     public function getClient(): ?Client
     {
