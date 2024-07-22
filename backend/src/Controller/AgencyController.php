@@ -13,11 +13,28 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use OpenApi\Attributes as OA;
 
-class AgencyController extends AbstractController
-{
-    #[Route('/api/agency/addAgent', name: 'app_agency_add_agent', methods: ['POST'])]
+#[Route('/api/agency', name: 'app_agency')]
+class AgencyController extends AbstractController {
+    #[Route('/', name: 'app_agency_index', methods: ['GET'])]
     #[IsGranted('ROLE_AGENCY')]
-    #[OA\Tag(name: 'Agent')]
+    #[OA\Tag(name: 'Agency')]
+    public function index(EntityManagerInterface $entityManager, SerializerService $serializerService): JsonResponse
+    {
+        $agencies = $entityManager->getRepository(Agency::class)->findAll();
+
+        if (!$agencies) {
+            return new JsonResponse(['success' => false, 'message' => 'No agencies found.'], Response::HTTP_NOT_FOUND);
+        }
+
+        return new JsonResponse([
+            'success' => true,
+            'agencies' => $serializerService->serializeArray($agencies),
+        ]);
+
+    }
+    #[Route('/addAgent', name: 'app_agency_add_agent', methods: ['POST'])]
+    #[IsGranted('ROLE_AGENCY')]
+    #[OA\Tag(name: 'Agency')]
     #[OA\RequestBody(
         required: true,
         content: new OA\JsonContent(
@@ -66,9 +83,9 @@ class AgencyController extends AbstractController
         ], Response::HTTP_CREATED);
     }
 
-    #[Route('/api/agency/{id}', name: 'app_agency_get_agent', methods: ['GET'])]
+    #[Route('/{id}', name: 'app_agency_get_agent', methods: ['GET'])]
     #[IsGranted('ROLE_AGENCY')]
-    #[OA\Tag(name: 'Agent')]
+    #[OA\Tag(name: 'Agency')]
     public function getAgent(int $id, EntityManagerInterface $entityManager, SerializerService $serializerService): JsonResponse
     {
         $agent = $entityManager->getRepository(Agent::class)->find($id);
@@ -82,9 +99,9 @@ class AgencyController extends AbstractController
         ]);
     }
 
-    #[Route('/api/agency/edit/{id}', name: 'app_agency_edit_agent', methods: ['PUT'])]
+    #[Route('/edit/{id}', name: 'app_agency_edit_agent', methods: ['PUT'])]
     #[IsGranted('ROLE_AGENCY')]
-    #[OA\Tag(name: 'Agent')]
+    #[OA\Tag(name: 'Agency')]
     #[OA\RequestBody(
         required: true,
         content: new OA\JsonContent(
@@ -129,9 +146,9 @@ class AgencyController extends AbstractController
         ]);
     }
 
-    #[Route('/api/agency/delete/{id}', name: 'app_agency_delete_agent', methods: ['DELETE'])]
+    #[Route('/delete/{id}', name: 'app_agency_delete_agent', methods: ['DELETE'])]
     #[IsGranted('ROLE_AGENCY')]
-    #[OA\Tag(name: 'Agent')]
+    #[OA\Tag(name: 'Agency')]
     public function deleteAgent(int $id, EntityManagerInterface $entityManager): JsonResponse
     {
         $agent = $entityManager->getRepository(Agent::class)->find($id);
