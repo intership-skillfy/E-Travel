@@ -29,10 +29,7 @@ class Review
     #[ORM\ManyToOne(inversedBy: 'reviews')]
     private ?Client $client = null;
 
-    #[ORM\ManyToOne(inversedBy: 'review')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Offer $offer = null;
-
+   
     public function getId(): ?int
     {
         return $this->id;
@@ -98,15 +95,5 @@ class Review
         return $this;
     }
 
-    public function getOffer(): ?Offer
-    {
-        return $this->offer;
-    }
-
-    public function setOffer(?Offer $offer): static
-    {
-        $this->offer = $offer;
-
-        return $this;
-    }
+  
 }

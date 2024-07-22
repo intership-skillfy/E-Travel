@@ -19,14 +19,14 @@ class Category
     private ?string $name = null;
 
     /**
-     * @var Collection<int, Offer>
+     * @var Collection<int, Offre>
      */
-    #[ORM\OneToMany(targetEntity: Offer::class, mappedBy: 'category', cascade: ['remove'])]
-    private Collection $offers;
+    #[ORM\OneToMany(targetEntity: Offre::class, mappedBy: 'category')]
+    private Collection $offres;
 
     public function __construct()
     {
-        $this->offers = new ArrayCollection();
+        $this->offres = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -47,29 +47,29 @@ class Category
     }
 
     /**
-     * @return Collection<int, Offer>
+     * @return Collection<int, Offre>
      */
-    public function getOffers(): Collection
+    public function getOffres(): Collection
     {
-        return $this->offers;
+        return $this->offres;
     }
 
-    public function addOffer(Offer $offer): static
+    public function addOffre(Offre $offre): static
     {
-        if (!$this->offers->contains($offer)) {
-            $this->offers->add($offer);
-            $offer->setCategory($this);
+        if (!$this->offres->contains($offre)) {
+            $this->offres->add($offre);
+            $offre->setCategory($this);
         }
 
         return $this;
     }
 
-    public function removeOffer(Offer $offer): static
+    public function removeOffre(Offre $offre): static
     {
-        if ($this->offers->removeElement($offer)) {
+        if ($this->offres->removeElement($offre)) {
             // set the owning side to null (unless already changed)
-            if ($offer->getCategory() === $this) {
-                $offer->setCategory(null);
+            if ($offre->getCategory() === $this) {
+                $offre->setCategory(null);
             }
         }
 
