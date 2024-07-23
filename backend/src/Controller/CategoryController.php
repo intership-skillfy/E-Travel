@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Category;
 use App\Form\CategoryType;
 use App\Repository\CategoryRepository;
+use App\Service\SerializerService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -27,27 +28,13 @@ class CategoryController extends AbstractController
             items: new OA\Items(ref: new Model(type: Category::class, groups: ['full']))
         )
     )]
-    public function index(CategoryRepository $categoryRepository): JsonResponse
+    public function index(CategoryRepository $categoryRepository, SerializerService $serializerService): JsonResponse
     {
         $categories = $categoryRepository->findAll();
-        $categoriesArray = [];
-
-        foreach ($categories as $category) {
-            $offersArray = [];
-
-            foreach ($category->getOffers() as $offer) {
-                $offersArray[] = [
-                    'id' => $offer->getId(),
-                    'title' => $offer->getTitle(),
-                ];
-            }
-
-            $categoriesArray[] = [
-                'id' => $category->getId(),
-                'name' => $category->getName(),
-                'offers' => $offersArray,
-            ];
+        if (empty($categories)) {
+            return new JsonResponse(['success' => false, 'message' => 'No categories found'], JsonResponse::HTTP_NOT_FOUND);
         }
+        $categoriesArray = $serializerService->serializeArray($categories);
 
         $responseArray = [
             'success' => true,
@@ -68,7 +55,7 @@ class CategoryController extends AbstractController
             ],
         ),
     )]
-    public function new(Request $request, EntityManagerInterface $entityManager): JsonResponse
+    public function new(Request $request, EntityManagerInterface $entityManager, SerializerService $serializerService): JsonResponse
     {
         $requestData = json_decode($request->getContent(), true);
 
@@ -87,10 +74,7 @@ class CategoryController extends AbstractController
         $responseData = [
             'success' => true,
             'message' => 'Category created successfully',
-            'category' => [
-                'id' => $category->getId(),
-                'name' => $category->getName(),
-            ],
+            'category' => $serializerService->serialize($category),
         ];
 
         return new JsonResponse($responseData);

@@ -21,7 +21,7 @@ class AppAuthenticator extends AbstractAuthenticator
     private $jwtManager;
     private $userProvider;
     private $jwtEncoder;
-    private $logger;i
+    private $logger;
 
 
     public function __construct(JWTTokenManagerInterface $jwtManager, UserProviderInterface $userProvider, JWTEncoderInterface $jwtEncoder, LoggerInterface $logger)
