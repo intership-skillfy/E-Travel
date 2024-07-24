@@ -6,21 +6,29 @@ use App\Repository\ReservationRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+
 
 #[ORM\Entity(repositoryClass: ReservationRepository::class)]
 class Reservation
+
 {
+    #[Groups("full")]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Groups("full")]
     #[ORM\Column]
     private ?\DateTimeImmutable $reservationDate = null;
 
+    #[Groups("full")]
     #[ORM\Column]
     private ?float $amount = null;
 
+
+    #[Groups("full")]
     #[ORM\Column(length: 255)]
     private ?string $status = null;
 
@@ -37,8 +45,15 @@ class Reservation
     #[ORM\ManyToOne(inversedBy: 'reservation')]
     private ?History $history = null;
 
+    /**
+     * @var Collection<int, Offre>
+     */
+    #[ORM\ManyToMany(targetEntity: Offre::class, mappedBy: 'reservation')]
+    private Collection $offres;
+
     public function __construct()
     {
+        $this->offres = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -126,6 +141,33 @@ class Reservation
     public function setHistory(?History $history): static
     {
         $this->history = $history;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Offre>
+     */
+    public function getOffres(): Collection
+    {
+        return $this->offres;
+    }
+
+    public function addOffre(Offre $offre): static
+    {
+        if (!$this->offres->contains($offre)) {
+            $this->offres->add($offre);
+            $offre->addReservation($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOffre(Offre $offre): static
+    {
+        if ($this->offres->removeElement($offre)) {
+            $offre->removeReservation($this);
+        }
 
         return $this;
     }

@@ -57,33 +57,34 @@ class Offre
     #[ORM\OneToMany(targetEntity: PriceList::class, mappedBy: 'offre')]
     private Collection $tarifs;
 
-
+    #[ORM\ManyToOne(inversedBy: 'offres')]
+    private ?Pack $pack = null;
 
     /**
      * @var Collection<int, Reservation>
      */
-    #[ORM\ManyToMany(targetEntity: Reservation::class, mappedBy: 'offres')]
-    private Collection $reservations;
+    #[ORM\ManyToMany(targetEntity: Reservation::class, inversedBy: 'offres')]
+    private Collection $reservation;
 
     #[ORM\ManyToOne(inversedBy: 'offres')]
-    private ?Pack $pack = null;
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Agency $agency = null;
 
     /**
      * @var Collection<int, Review>
      */
     #[ORM\OneToMany(targetEntity: Review::class, mappedBy: 'offre')]
-    private Collection $reviews;
-
-    #[ORM\ManyToOne(inversedBy: 'offres')]
-    #[ORM\JoinColumn(nullable: true)]
-    private ?Agency $agency = null;
+    private Collection $review;
 
 
+
+   
     public function __construct()
     {
         $this->tarifs = new ArrayCollection();
-        $this->reservations = new ArrayCollection();
-        $this->reviews = new ArrayCollection();
+        $this->reservation = new ArrayCollection();
+        $this->review = new ArrayCollection();
+        
     }
 
     public function getId(): ?int
@@ -217,32 +218,6 @@ class Offre
 
         return $this;
     }
-     /**
-     * @return Collection<int, Reservation>
-     */
-    public function getReservations(): Collection
-    {
-        return $this->reservations;
-    }
-
-    public function addReservation(Reservation $reservation): static
-    {
-        if (!$this->reservations->contains($reservation)) {
-            $this->reservations->add($reservation);
-            $reservation->addOffre($this);
-        }
-
-        return $this;
-    }
-
-    public function removeReservation(Reservation $reservation): static
-    {
-        if ($this->reservations->removeElement($reservation)) {
-            $reservation->removeOffre($this);
-        }
-
-        return $this;
-    }
 
     public function getPack(): ?Pack
     {
@@ -257,31 +232,25 @@ class Offre
     }
 
     /**
-     * @return Collection<int, Review>
+     * @return Collection<int, Reservation>
      */
-    public function getReviews(): Collection
+    public function getReservation(): Collection
     {
-        return $this->reviews;
+        return $this->reservation;
     }
 
-    public function addReview(Review $review): static
+    public function addReservation(Reservation $reservation): static
     {
-        if (!$this->reviews->contains($review)) {
-            $this->reviews->add($review);
-            $review->setOffre($this);
+        if (!$this->reservation->contains($reservation)) {
+            $this->reservation->add($reservation);
         }
 
         return $this;
     }
 
-    public function removeReview(Review $review): static
+    public function removeReservation(Reservation $reservation): static
     {
-        if ($this->reviews->removeElement($review)) {
-            // set the owning side to null (unless already changed)
-            if ($review->getOffre() === $this) {
-                $review->setOffre(null);
-            }
-        }
+        $this->reservation->removeElement($reservation);
 
         return $this;
     }
@@ -297,6 +266,37 @@ class Offre
 
         return $this;
     }
+
+    /**
+     * @return Collection<int, Review>
+     */
+    public function getReview(): Collection
+    {
+        return $this->review;
+    }
+
+    public function addReview(Review $review): static
+    {
+        if (!$this->review->contains($review)) {
+            $this->review->add($review);
+            $review->setOffre($this);
+        }
+
+        return $this;
+    }
+
+    public function removeReview(Review $review): static
+    {
+        if ($this->review->removeElement($review)) {
+            // set the owning side to null (unless already changed)
+            if ($review->getOffre() === $this) {
+                $review->setOffre(null);
+            }
+        }
+
+        return $this;
+    }
+     
 }
 
 
