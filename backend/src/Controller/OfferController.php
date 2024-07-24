@@ -3,8 +3,8 @@
 namespace App\Controller;
 
 use App\Entity\Category;
-use App\Entity\Offer;
-use App\Repository\OfferRepository;
+use App\Entity\Offre;
+use App\Repository\OffreRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,56 +17,56 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 class OfferController extends AbstractController
 {
-    #[Route('/api/offer', name: 'app_offer_index', methods: ['GET'])]
-    #[OA\Tag(name: 'Offer')]
+    #[Route('/api/offre', name: 'app_offre_index', methods: ['GET'])]
+    #[OA\Tag(name: 'Offre')]
     #[OA\Response(
         response: 200,
         description: 'Returns list of categories',
         content: new OA\JsonContent(
             type: 'array',
-            items: new OA\Items(ref: new Model(type: Offer::class, groups: ['full']))
+            items: new OA\Items(ref: new Model(type: Offre::class, groups: ['full']))
         )
     )]
-    public function index(OfferRepository $offerRepository): JsonResponse
+    public function index(OffreRepository $offreRepository): JsonResponse
     {
-        $offers = $offerRepository->findAll();
-        $offersArray = [];
-        foreach ($offers as $offer) {
-            $offersArray[] = [
-                'id' => $offer->getId(),
-                'title' => $offer->getTitle(),
-                'category' => $offer->getCategory()->getName(),
-                'description' => $offer->getDescription(),
-                'startDate' => $offer->getStartDate()->format('Y-m-d H:i:s'),
-                'endDate' => $offer->getEndDate()->format('Y-m-d H:i:s'),
-                'price' => $offer->getPrice(),
-                'destination' => $offer->getDestination(),
-                'updatedAt' => $offer->getUpdatedAt()->format('Y-m-d H:i:s'),
-                'capacity' => $offer->getCapacity(),
+        $offres = $offreRepository->findAll();
+        $offresArray = [];
+        foreach ($offres as $offre) {
+            $offresArray[] = [
+                'id' => $offre->getId(),
+                'title' => $offre->getTitle(),
+                'category' => $offre->getCategory()->getName(),
+                'description' => $offre->getDescription(),
+                'startDate' => $offre->getStartDate()->format('Y-m-d H:i:s'),
+                'endDate' => $offre->getEndDate()->format('Y-m-d H:i:s'),
+                'price' => $offre->getPrice(),
+                'destination' => $offre->getDestination(),
+                'updatedAt' => $offre->getUpdatedAt()->format('Y-m-d H:i:s'),
+                'capacity' => $offre->getCapacity(),
             ];
         }
 
         $responseArray = [
             'success' => true,
-            'offers' => $offersArray,
+            'offres' => $offresArray,
         ];
         return new JsonResponse($responseArray);
     }
 
-    #[Route('/api/offer/new', name: 'app_offer_new', methods: ['POST'])]
-    #[OA\Tag(name: 'Offer')]
+    #[Route('/api/offre/new', name: 'app_offre_new', methods: ['POST'])]
+    #[OA\Tag(name: 'Offre')]
     #[OA\RequestBody(
         required: true,
         content: new OA\JsonContent(
             type: Object::class,
             example: [
-                "title" => "Offer Title",
+                "title" => "Offre Title",
                 "category" => 1,
-                "description" => "Offer Description",
+                "description" => "Offre Description",
                 "startDate" => "2024-07-17T10:00:00Z",
                 "endDate" => "2024-07-20T18:00:00Z",
                 "price" => 100,
-                "destination" => "Offer Destination",
+                "destination" => "Offre Destination",
                 "capacity" => 50,
             ],
         )
@@ -112,55 +112,55 @@ class OfferController extends AbstractController
             return new JsonResponse(['error' => 'Category not found'], JsonResponse::HTTP_NOT_FOUND);
         }
 
-        $offer = new Offer();
-        $offer->setTitle($requestData['title']);
-        $offer->setCategory($category);
-        $offer->setDescription($requestData['description']);
-        $offer->setStartDate(new \DateTimeImmutable($requestData['startDate']));
-        $offer->setEndDate(new \DateTimeImmutable($requestData['endDate']));
-        $offer->setPrice($requestData['price']);
-        $offer->setDestination($requestData['destination']);
-        $offer->setUpdatedAt(new \DateTimeImmutable());
-        $offer->setCapacity($requestData['capacity']);
-        $offer->setAgency(null);
+        $offre = new Offre();
+        // $offre->setTitle($requestData['title']);
+        // $offre->setCategory($category);
+        // $offre->setDescription($requestData['description']);
+        // $offre->setStartDate(new \DateTimeImmutable($requestData['startDate']));
+        // $offre->setEndDate(new \DateTimeImmutable($requestData['endDate']));
+        // $offre->setPrice($requestData['price']);
+        // $offre->setDestination($requestData['destination']);
+        // $offre->setUpdatedAt(new \DateTimeImmutable());
+        // $offre->setCapacity($requestData['capacity']);
+        // $offre->setAgency(null);
 
-        $category->addOffer($offer);
+        $category->addOffre($offre);
 
-        $entityManager->persist($offer);
+        $entityManager->persist($offre);
         $entityManager->flush();
 
-        $responseArray = [
-            'success' => true,
-            'offer' => [
-                'id' => $offer->getId(),
-                'title' => $offer->getTitle(),
-                'category' => $category->getName(),
-                'description' => $offer->getDescription(),
-                'startDate' => $offer->getStartDate()->format('Y-m-d H:i:s'),
-                'endDate' => $offer->getEndDate()->format('Y-m-d H:i:s'),
-                'price' => $offer->getPrice(),
-                'destination' => $offer->getDestination(),
-                'updatedAt' => $offer->getUpdatedAt()->format('Y-m-d H:i:s'),
-                'capacity' => $offer->getCapacity(),
-            ],
-        ];
-        return new JsonResponse($responseArray);
+        // $responseArray = [
+        //     'success' => true,
+        //     'offre' => [
+        //         'id' => $offre->getId(),
+        //         'title' => $offre->getTitle(),
+        //         'category' => $category->getName(),
+        //         'description' => $offre->getDescription(),
+        //         'startDate' => $offre->getStartDate()->format('Y-m-d H:i:s'),
+        //         'endDate' => $offre->getEndDate()->format('Y-m-d H:i:s'),
+        //         'price' => $offre->getPrice(),
+        //         'destination' => $offre->getDestination(),
+        //         'updatedAt' => $offre->getUpdatedAt()->format('Y-m-d H:i:s'),
+        //         'capacity' => $offre->getCapacity(),
+        //     ],
+        // ];
+        // return new JsonResponse($responseArray);
     }
 
-    #[Route('/api/offer/edit/{id}', name: 'app_offer_edit', methods: ['PUT'])]
-    #[OA\Tag(name: 'Offer')]
+    #[Route('/api/offre/edit/{id}', name: 'app_offre_edit', methods: ['PUT'])]
+    #[OA\Tag(name: 'Offre')]
     #[OA\RequestBody(
         required: true,
         content: new OA\JsonContent(
             type: Object::class,
             example: [
-                "title" => "Offer Title",
+                "title" => "Offre Title",
                 "category" => 1,
-                "description" => "Offer Description",
+                "description" => "Offre Description",
                 "startDate" => "2024-07-17T10:00:00Z",
                 "endDate" => "2024-07-20T18:00:00Z",
                 "price" => 100,
-                "destination" => "Offer Destination",
+                "destination" => "Offre Destination",
                 "capacity" => 50,
             ],
         )
@@ -195,9 +195,9 @@ class OfferController extends AbstractController
             $missingFields[] = 'capacity';
         }
 
-        $offer = $entityManager->getRepository(Offer::class)->find($id);
-        if (!$offer) {
-            return new JsonResponse(['error' => 'Offer not found'], JsonResponse::HTTP_NOT_FOUND);
+        $offre = $entityManager->getRepository(Offre::class)->find($id);
+        if (!$offre) {
+            return new JsonResponse(['error' => 'Offre not found'], JsonResponse::HTTP_NOT_FOUND);
         }
 
         $category = $entityManager->getRepository(Category::class)->find($requestData['category']);
@@ -205,46 +205,46 @@ class OfferController extends AbstractController
             return new JsonResponse(['error' => 'Category not found'], JsonResponse::HTTP_NOT_FOUND);
         }
 
-        $offer->setTitle($requestData['title']);
-        $offer->setCategory($category);
-        $offer->setDescription($requestData['description']);
-        $offer->setStartDate(new \DateTimeImmutable($requestData['startDate']));
-        $offer->setEndDate(new \DateTimeImmutable($requestData['endDate']));
-        $offer->setPrice($requestData['price']);
-        $offer->setDestination($requestData['destination']);
-        $offer->setUpdatedAt(new \DateTimeImmutable());
-        $offer->setCapacity($requestData['capacity']);
+        $offre->setTitle($requestData['title']);
+        $offre->setCategory($category);
+        $offre->setDescription($requestData['description']);
+        $offre->setStartDate(new \DateTimeImmutable($requestData['startDate']));
+        $offre->setEndDate(new \DateTimeImmutable($requestData['endDate']));
+        $offre->setPrice($requestData['price']);
+        $offre->setDestination($requestData['destination']);
+        $offre->setUpdatedAt(new \DateTimeImmutable());
+        $offre->setCapacity($requestData['capacity']);
 
-        $entityManager->persist($offer);
+        $entityManager->persist($offre);
         $entityManager->flush();
 
         $responseArray = [
             'success' => true,
-            'offer' => [
-                'id' => $offer->getId(),
-                'title' => $offer->getTitle(),
-                'category' => $offer->getCategory()->getName(),
-                'description' => $offer->getDescription(),
-                'startDate' => $offer->getStartDate()->format('Y-m-d H:i:s'),
-                'endDate' => $offer->getEndDate()->format('Y-m-d H:i:s'),
-                'price' => $offer->getPrice(),
-                'destination' => $offer->getDestination(),
-                'updatedAt' => $offer->getUpdatedAt()->format('Y-m-d H:i:s'),
-                'capacity' => $offer->getCapacity(),
+            'offre' => [
+                'id' => $offre->getId(),
+                'title' => $offre->getTitle(),
+                'category' => $offre->getCategory()->getName(),
+                'description' => $offre->getDescription(),
+                'startDate' => $offre->getStartDate()->format('Y-m-d H:i:s'),
+                'endDate' => $offre->getEndDate()->format('Y-m-d H:i:s'),
+                'price' => $offre->getPrice(),
+                'destination' => $offre->getDestination(),
+                'updatedAt' => $offre->getUpdatedAt()->format('Y-m-d H:i:s'),
+                'capacity' => $offre->getCapacity(),
             ],
         ];
         return new JsonResponse($responseArray);
     }
 
-    #[Route('/api/offer/delete/{id}', name: 'app_offer_delete', methods: ['DELETE'])]
-    #[OA\Tag(name: 'Offer')]
+    #[Route('/api/offre/delete/{id}', name: 'app_offre_delete', methods: ['DELETE'])]
+    #[OA\Tag(name: 'Offre')]
     public function delete(EntityManagerInterface $entityManager, int $id): JsonResponse
     {
-        $offer = $entityManager->getRepository(Offer::class)->find($id);
-        if (!$offer) {
-            return new JsonResponse(['error' => 'Offer not found'], JsonResponse::HTTP_NOT_FOUND);
+        $offre = $entityManager->getRepository(Offre::class)->find($id);
+        if (!$offre) {
+            return new JsonResponse(['error' => 'Offre not found'], JsonResponse::HTTP_NOT_FOUND);
         }
-        $entityManager->remove($offer);
+        $entityManager->remove($offre);
         $entityManager->flush();
         return new JsonResponse(['success' => true]);
     }
