@@ -11,7 +11,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -21,15 +20,62 @@ use Nelmio\ApiDocBundle\Annotation\Security;
 
 #[Route('/api/reservations')]
 
+#[Route('/api/reservations')]
 class ReservationController extends AbstractController
 {
-    private ReservationRepository $reservationRepository;
-    private ClientRepository $clientRepository;
-    private EntityManagerInterface $entityManager;
-    private ValidatorInterface $validator;
-    private SerializerInterface $serializer;
+    #[Route('/', name: 'list_reservations', methods: ["GET"])]
+    #[OA\Tag(name: 'Reservations')]
+    #[OA\Response(
+        response: 200,
+        description: 'Returns list of reservations',
+        content: new OA\JsonContent(
+            type: 'array',
+            items: new OA\Items(ref: new Model(type: Reservation::class, groups: ['full']))
+        )
+    )]
+    public function listReservations(ReservationRepository $reservationRepository): JsonResponse
+    {
+        $reservations = $reservationRepository->findAll();
+        return new JsonResponse(['success' => true, 'reservations' => $reservations]);
+    }
 
-    public function __construct(
+    #[Route('/{id}', name: 'get_reservation', methods: ["GET"])]
+    #[OA\Tag(name: 'Reservations')]
+    #[OA\Response(
+        response: 200,
+        description: 'Returns the details of a reservation',
+        content: new OA\JsonContent(ref: new Model(type: Reservation::class, groups: ['full']))
+    )]
+    #[OA\Response(
+        response: 404,
+        description: 'Reservation not found'
+    )]
+    public function getReservation(int $id, ReservationRepository $reservationRepository): JsonResponse
+    {
+        $reservation = $reservationRepository->find($id);
+        if (!$reservation) {
+            return new JsonResponse(['message' => 'Reservation not found'], JsonResponse::HTTP_NOT_FOUND);
+        }
+        return new JsonResponse($reservation);
+    }
+
+    #[Route('/', name: 'create_reservation', methods: ["POST"])]
+    #[OA\Tag(name: 'Reservations')]
+    #[OA\RequestBody(
+        required: true,
+        content: new OA\JsonContent(ref: new Model(type: Reservation::class, groups: ['create']))
+    )]
+    #[OA\Response(
+        response: 201,
+        description: 'Reservation created successfully',
+        content: new OA\JsonContent(ref: new Model(type: Reservation::class, groups: ['full']))
+    )]
+    #[OA\Response(
+        response: 400,
+        description: 'Validation errors'
+    )]
+    public function createReservation(
+        Request $request,
         EntityManagerInterface $entityManager,
         ReservationRepository $reservationRepository,
         ClientRepository $clientRepository,
@@ -112,7 +158,7 @@ class ReservationController extends AbstractController
     
         $client = $this->clientRepository->find($data['client_id']);
         if (!$client) {
-            return $this->json(['message' => 'Client not found'], 404);
+            return new JsonResponse(['message' => 'Client not found'], JsonResponse::HTTP_NOT_FOUND);
         }
     
         $reservation->setClient($client);
@@ -121,7 +167,7 @@ class ReservationController extends AbstractController
         if (!$history) {
             $history = new History();
             $client->setHistory($history);
-            $this->entityManager->persist($history);
+            $entityManager->persist($history);
         }
     
         $history->addReservation($reservation);
@@ -206,7 +252,7 @@ class ReservationController extends AbstractController
     {
         $reservation = $this->reservationRepository->find($id);
         if (!$reservation) {
-            return $this->json(['message' => 'Reservation not found'], 404);
+            return new JsonResponse(['message' => 'Reservation not found'], JsonResponse::HTTP_NOT_FOUND);
         }
 
         // Remove the reservation from history
@@ -216,8 +262,8 @@ class ReservationController extends AbstractController
         }
 
         // Remove the reservation
-        $this->entityManager->remove($reservation);
-        $this->entityManager->flush();
+        $entityManager->remove($reservation);
+        $entityManager->flush();
 
         return $this->json(['message' => 'Reservation deleted successfully'], 200);
     }
@@ -242,7 +288,7 @@ class ReservationController extends AbstractController
         $reservation = $this->reservationRepository->find($id);
 
         if (!$reservation) {
-            return $this->json(['error' => 'Reservation not found'], 404);
+            return new JsonResponse(['error' => 'Reservation not found'], JsonResponse::HTTP_NOT_FOUND);
         }
 
         $data = json_decode($request->getContent(), true);
@@ -251,14 +297,14 @@ class ReservationController extends AbstractController
         $allowedStatuses = ['confirmed', 'canceled', 'pending'];
 
         if (!in_array($newStatus, $allowedStatuses, true)) {
-            return $this->json(['error' => 'Invalid status'], 400);
+            return new JsonResponse(['error' => 'Invalid status'], JsonResponse::HTTP_BAD_REQUEST);
         }
 
         $reservation->setStatus($newStatus);
 
-        $errors = $this->validator->validate($reservation);
+        $errors = $validator->validate($reservation);
         if (count($errors) > 0) {
-            return $this->json($errors, 400);
+            return new JsonResponse($errors, JsonResponse::HTTP_BAD_REQUEST);
         }
 
         $this->entityManager->flush();
