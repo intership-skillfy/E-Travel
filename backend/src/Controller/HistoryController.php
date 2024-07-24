@@ -13,18 +13,26 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use OpenApi\Attributes as OA;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Annotation\Security;
 
-#[Route('/history')]
+#[Route('/api/history')]
 
 class HistoryController extends AbstractController
 {
-   
-
-   
-    
-
     #[Route('/', name:'get_histories', methods:['GET'])]
-public function getHistories(HistoryRepository $historyRepository): JsonResponse
+    #[OA\Tag(name: 'History')]
+    #[OA\Response(
+        response: 200,
+        description: 'Returns list of histories',
+        content: new OA\JsonContent(
+            type: 'array',
+            items: new OA\Items(ref: new Model(type: History::class, groups: ['full']))
+        )
+    )]
+   
+    public function getHistories(HistoryRepository $historyRepository): JsonResponse
 {
     $histories = $historyRepository->findAll();
 
@@ -70,7 +78,17 @@ public function getHistories(HistoryRepository $historyRepository): JsonResponse
 
 
 
-#[Route('/{id}', name:'get_search_history', methods:['GET'])]
+#[Route('/{id}', name:'get_history', methods:['GET'])]
+#[OA\Tag(name: 'History')]
+    #[OA\Response(
+        response: 200,
+        description: 'Returns history',
+        content: new OA\JsonContent(
+            type: 'array',
+            items: new OA\Items(ref: new Model(type: History::class, groups: ['full']))
+        )
+    )]
+
 public function getHistory(int $id, HistoryRepository $historyRepository): JsonResponse
 {
     $history = $historyRepository->find($id);
@@ -111,6 +129,15 @@ public function getHistory(int $id, HistoryRepository $historyRepository): JsonR
 
 
     #[Route('/client/{clientId}', name: 'client_history', methods: ["GET"])]
+    #[OA\Tag(name: 'History')]
+    #[OA\Response(
+        response: 200,
+        description: 'Returns history by client' ,
+        content: new OA\JsonContent(
+            type: 'array',
+            items: new OA\Items(ref: new Model(type: History::class, groups: ['full']))
+        )
+    )]
     public function getClientHistory(int $clientId, ClientRepository $clientRepository): JsonResponse
     {
         $client = $clientRepository->find($clientId);
@@ -146,27 +173,5 @@ public function getHistory(int $id, HistoryRepository $historyRepository): JsonR
 
 
     
-    #[Route('/history/reservations/{historyId}', name: 'reservations_by_history', methods: ['GET'])]
-    public function listReservationsByHistory(int $historyId, SerializerInterface $serializer): JsonResponse
-    {
-        // Find the history entity by its ID
-        $history = $this->historyRepository->find($historyId);
-
-        if (!$history) {
-            return $this->json(['error' => 'History not found'], 404);
-        }
-
-        // Get reservations associated with the history
-        $reservations = $history->getReservations();
-
-        // Serialize reservations to JSON
-        $serializedReservations = [];
-
-        foreach ($reservations as $reservation) {
-            $serializedReservations[] = $serializer->serialize($reservation, 'json', ['ignored_attributes' => ['history']]);
-        }
-
-        // Return JSON response with serialized reservations
-        return new JsonResponse($serializedReservations, 200, [], true); // true to convert JSON to associative array
-    }
+   
 }

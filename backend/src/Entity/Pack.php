@@ -30,8 +30,15 @@ class Pack
     #[ORM\JoinColumn(nullable: false)]
     private ?Client $client = null;
 
+    /**
+     * @var Collection<int, Offre>
+     */
+    #[ORM\OneToMany(targetEntity: Offre::class, mappedBy: 'pack')]
+    private Collection $offres;
+
     public function __construct()
     {
+        $this->offres = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -95,6 +102,36 @@ class Pack
     public function setClient(Client $client): static
     {
         $this->client = $client;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Offre>
+     */
+    public function getOffres(): Collection
+    {
+        return $this->offres;
+    }
+
+    public function addOffre(Offre $offre): static
+    {
+        if (!$this->offres->contains($offre)) {
+            $this->offres->add($offre);
+            $offre->setPack($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOffre(Offre $offre): static
+    {
+        if ($this->offres->removeElement($offre)) {
+            // set the owning side to null (unless already changed)
+            if ($offre->getPack() === $this) {
+                $offre->setPack(null);
+            }
+        }
 
         return $this;
     }

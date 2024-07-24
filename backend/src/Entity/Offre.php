@@ -58,9 +58,34 @@ class Offre
     #[ORM\OneToMany(targetEntity: PriceList::class, mappedBy: 'offre')]
     private Collection $tarifs;
 
+    #[ORM\ManyToOne(inversedBy: 'offres')]
+    private ?Pack $pack = null;
+
+    /**
+     * @var Collection<int, Reservation>
+     */
+    #[ORM\ManyToMany(targetEntity: Reservation::class, inversedBy: 'offres')]
+    private Collection $reservation;
+
+    #[ORM\ManyToOne(inversedBy: 'offres')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Agency $agency = null;
+
+    /**
+     * @var Collection<int, Review>
+     */
+    #[ORM\OneToMany(targetEntity: Review::class, mappedBy: 'offre')]
+    private Collection $review;
+
+
+
+   
     public function __construct()
     {
         $this->tarifs = new ArrayCollection();
+        $this->reservation = new ArrayCollection();
+        $this->review = new ArrayCollection();
+        
     }
 
     public function getId(): ?int
@@ -194,4 +219,85 @@ class Offre
 
         return $this;
     }
+
+    public function getPack(): ?Pack
+    {
+        return $this->pack;
+    }
+
+    public function setPack(?Pack $pack): static
+    {
+        $this->pack = $pack;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Reservation>
+     */
+    public function getReservation(): Collection
+    {
+        return $this->reservation;
+    }
+
+    public function addReservation(Reservation $reservation): static
+    {
+        if (!$this->reservation->contains($reservation)) {
+            $this->reservation->add($reservation);
+        }
+
+        return $this;
+    }
+
+    public function removeReservation(Reservation $reservation): static
+    {
+        $this->reservation->removeElement($reservation);
+
+        return $this;
+    }
+
+    public function getAgency(): ?Agency
+    {
+        return $this->agency;
+    }
+
+    public function setAgency(?Agency $agency): static
+    {
+        $this->agency = $agency;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Review>
+     */
+    public function getReview(): Collection
+    {
+        return $this->review;
+    }
+
+    public function addReview(Review $review): static
+    {
+        if (!$this->review->contains($review)) {
+            $this->review->add($review);
+            $review->setOffre($this);
+        }
+
+        return $this;
+    }
+
+    public function removeReview(Review $review): static
+    {
+        if ($this->review->removeElement($review)) {
+            // set the owning side to null (unless already changed)
+            if ($review->getOffre() === $this) {
+                $review->setOffre(null);
+            }
+        }
+
+        return $this;
+    }
+     
 }
+
+

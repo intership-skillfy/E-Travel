@@ -34,12 +34,19 @@ class Agency extends User
     #[ORM\OneToMany(targetEntity: GuideArticle::class, mappedBy: 'agency')]
     private Collection $article;
 
+    /**
+     * @var Collection<int, Offre>
+     */
+    #[ORM\OneToMany(targetEntity: Offre::class, mappedBy: 'agency')]
+    private Collection $offres;
+
   
    
     public function __construct()
     {
         $this->agents = new ArrayCollection();
         $this->article = new ArrayCollection();
+        $this->offres = new ArrayCollection();
     }
 
     public function getAddresse(): ?string
@@ -144,6 +151,36 @@ class Agency extends User
             // set the owning side to null (unless already changed)
             if ($article->getAgency() === $this) {
                 $article->setAgency(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Offre>
+     */
+    public function getOffres(): Collection
+    {
+        return $this->offres;
+    }
+
+    public function addOffre(Offre $offre): static
+    {
+        if (!$this->offres->contains($offre)) {
+            $this->offres->add($offre);
+            $offre->setAgency($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOffre(Offre $offre): static
+    {
+        if ($this->offres->removeElement($offre)) {
+            // set the owning side to null (unless already changed)
+            if ($offre->getAgency() === $this) {
+                $offre->setAgency(null);
             }
         }
 
