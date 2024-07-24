@@ -5,6 +5,8 @@ namespace App\Entity;
 use App\Repository\GuideArticleRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+
 
 #[ORM\Entity(repositoryClass: GuideArticleRepository::class)]
 class GuideArticle
@@ -14,27 +16,35 @@ class GuideArticle
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Groups("full")]
     #[ORM\Column(length: 255)]
     private ?string $title = null;
 
+    #[Groups("full")]
     #[ORM\Column(type: Types::TEXT)]
     private ?string $content = null;
 
+    #[Groups("full")]
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
+    #[Groups("full")]
     #[ORM\Column]
     private ?\DateTimeImmutable $updatedAt = null;
 
+    #[Groups("full")]
     #[ORM\Column(type: Types::ARRAY)]
     private array $images = [];
 
+    #[Groups("full")]
     #[ORM\ManyToOne(inversedBy: 'article')]
     private ?Agency $agency = null;
 
+    #[Groups("full")]
     #[ORM\ManyToOne(inversedBy: 'article')]
     private ?Admin $admin_article = null;
 
+    #[Groups("full")]
     #[ORM\ManyToOne(inversedBy: 'article')]
     private ?Client $client = null;
 

@@ -7,41 +7,51 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+
 
 #[ORM\Entity(repositoryClass: ClientRepository::class)]
 class Client extends User
 {
-
+    
+    #[Groups("full")]
     #[ORM\Column(length: 255)]
     private ?string $profilePic = null;
 
+    #[Groups("full")]
     #[ORM\Column(length: 255)]
     private ?string $phone = null;
 
+    #[Groups("full")]
     #[ORM\Column(type: Types::ARRAY, nullable: true)]
     private ?array $preferences = null;
 
      /**
      * @var Collection<int, GuideArticle>
      */
+    #[Groups("full")]
     #[ORM\OneToMany(targetEntity: GuideArticle::class, mappedBy: 'agent')]
     private Collection $article;
 
     /**
      * @var Collection<int, Reservation>
      */
+    #[Groups("full")]
     #[ORM\OneToMany(targetEntity: Reservation::class, mappedBy: 'client')]
     private Collection $reservations;
 
     /**
      * @var Collection<int, Review>
      */
+    #[Groups("full")]
     #[ORM\OneToMany(targetEntity: Review::class, mappedBy: 'client')]
     private Collection $reviews;
 
+    #[Groups("full")]
     #[ORM\OneToOne(mappedBy: 'client', cascade: ['persist', 'remove'])]
     private ?Pack $pack = null;
 
+    #[Groups("full")]
     #[ORM\OneToOne(mappedBy: 'client', cascade: ['persist', 'remove'])]
     private ?History $history = null;
 

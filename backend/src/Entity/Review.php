@@ -5,6 +5,8 @@ namespace App\Entity;
 use App\Repository\ReviewRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+
 
 #[ORM\Entity(repositoryClass: ReviewRepository::class)]
 class Review
@@ -14,20 +16,28 @@ class Review
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Groups("full")]
     #[ORM\Column(length: 255)]
     private ?string $comment = null;
 
+    #[Groups("full")]
     #[ORM\Column]
     private ?int $rating = null;
 
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
-    #[ORM\Column(type: Types::ARRAY, nullable: true)]
-    private ?array $images = null;
-
-    #[ORM\ManyToOne(inversedBy: 'reviews')]
+    #[ORM\ManyToOne(inversedBy: 'reviews', cascade: ['persist', 'remove'])]
     private ?Client $client = null;
+    
+    #[ORM\ManyToOne(inversedBy: 'reviews', cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Offre $offre = null;
+
+    public function __construct()
+    {
+        $this->createdAt = new \DateTimeImmutable(); // Set createdAt to the current date and time
+    }
 
    
     public function getId(): ?int
@@ -64,24 +74,13 @@ class Review
         return $this->createdAt;
     }
 
-    public function setCreatedAt(\DateTimeImmutable $createdAt): static
+    public function setCreatedAt(): static
     {
-        $this->createdAt = $createdAt;
-
+        $this->createdAt = new \DateTimeImmutable();
         return $this;
     }
 
-    public function getImages(): ?array
-    {
-        return $this->images;
-    }
-
-    public function setImages(?array $images): static
-    {
-        $this->images = $images;
-
-        return $this;
-    }
+    
 
     public function getClient(): ?Client
     {
@@ -91,6 +90,18 @@ class Review
     public function setClient(?Client $client): static
     {
         $this->client = $client;
+
+        return $this;
+    }
+
+    public function getOffre(): ?Offre
+    {
+        return $this->offre;
+    }
+
+    public function setOffre(?Offre $offre): static
+    {
+        $this->offre = $offre;
 
         return $this;
     }
