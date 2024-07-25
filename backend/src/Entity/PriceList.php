@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\PriceListRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: PriceListRepository::class)]
@@ -19,14 +21,23 @@ class PriceList
     #[ORM\Column]
     private ?\DateTimeImmutable $end_date = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $hotels = null;
 
     #[ORM\Column]
     private ?float $price = null;
 
     #[ORM\ManyToOne(inversedBy: 'tarifs')]
     private ?Offre $offre = null;
+
+    /**
+     * @var Collection<int, hotel>
+     */
+    #[ORM\ManyToMany(targetEntity: hotel::class, inversedBy: 'priceLists')]
+    private Collection $hotels;
+
+    public function __construct()
+    {
+        $this->hotels = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -57,17 +68,6 @@ class PriceList
         return $this;
     }
 
-    public function getHotels(): ?string
-    {
-        return $this->hotels;
-    }
-
-    public function setHotels(?string $hotels): static
-    {
-        $this->hotels = $hotels;
-
-        return $this;
-    }
 
     public function getPrice(): ?float
     {
@@ -89,6 +89,30 @@ class PriceList
     public function setOffre(?Offre $offre): static
     {
         $this->offre = $offre;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, hotel>
+     */
+    public function getHotels(): Collection
+    {
+        return $this->hotels;
+    }
+
+    public function addHotel(hotel $hotel): static
+    {
+        if (!$this->hotels->contains($hotel)) {
+            $this->hotels->add($hotel);
+        }
+
+        return $this;
+    }
+
+    public function removeHotel(hotel $hotel): static
+    {
+        $this->hotels->removeElement($hotel);
 
         return $this;
     }

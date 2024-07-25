@@ -21,17 +21,18 @@ services:
       - "../src/Entity/"
       - "../src/Kernel.php"
 
-    App\Service\RefreshTokenService:
-        arguments:
-            $ttl: 2592000 
+  App\Service\RefreshTokenService:
+    arguments:
+      $ttl: 2592000 
 
-    App\Service\FileUploader:
-        # arguments:
-        #     $targetDirectory: '%uploads_directory%'
+  App\Service\FileUploader:
+    # arguments:
+    #     $targetDirectory: '%uploads_directory%'
 
   App\Service\SerializerService:
     autowire: true
     autoconfigure: true
+
   # please note that last definitions always *replace* previous ones
   App\EventListener\ExceptionListener:
     tags:
