@@ -47,9 +47,7 @@ class Client extends User
     #[ORM\OneToMany(targetEntity: Review::class, mappedBy: 'client')]
     private Collection $reviews;
 
-    #[Groups("full")]
-    #[ORM\OneToOne(mappedBy: 'client', cascade: ['persist', 'remove'])]
-    private ?Pack $pack = null;
+
 
     #[Groups("full")]
     #[ORM\OneToOne(mappedBy: 'client', cascade: ['persist', 'remove'])]
@@ -162,22 +160,7 @@ class Client extends User
         return $this;
     }
 
-    public function getPack(): ?Pack
-    {
-        return $this->pack;
-    }
 
-    public function setPack(Pack $pack): static
-    {
-        // set the owning side of the relation if necessary
-        if ($pack->getClient() !== $this) {
-            $pack->setClient($this);
-        }
-
-        $this->pack = $pack;
-
-        return $this;
-    }
 
     public function getHistory(): ?History
     {

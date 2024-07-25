@@ -39,9 +39,6 @@ class Reservation
     #[ORM\Column]
     private ?int $nbr_person = null;
 
-    #[ORM\OneToOne(inversedBy: 'reservation', cascade: ['persist', 'remove'])]
-    private ?Pack $pack = null;
-
     #[ORM\ManyToOne(inversedBy: 'reservation')]
     private ?History $history = null;
 
@@ -121,18 +118,7 @@ class Reservation
         return $this;
     }
 
-    public function getPack(): ?Pack
-    {
-        return $this->pack;
-    }
-
-    public function setPack(?Pack $pack): static
-    {
-        $this->pack = $pack;
-
-        return $this;
-    }
-
+ 
     public function getHistory(): ?History
     {
         return $this->history;

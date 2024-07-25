@@ -23,7 +23,7 @@ services:
 
   App\Service\RefreshTokenService:
     arguments:
-      $ttl: 2592000
+      $ttl: 2592000 
 
   App\Service\FileUploader:
     # arguments:
@@ -32,6 +32,7 @@ services:
   App\Service\SerializerService:
     autowire: true
     autoconfigure: true
+
   # please note that last definitions always *replace* previous ones
   App\EventListener\ExceptionListener:
     tags:
