@@ -64,13 +64,10 @@ class TripController extends AbstractController
         
         $trip = new Trip();
         if (isset($data['name'])) $trip->setName($data['name']);
-        if (isset($data['description'])) $trip->setDescription($data['description']);
         if (isset($data['detailedDescription'])) $trip->setDetailedDescription($data['detailedDescription']);
         if (isset($data['images'])) $trip->setImages($data['images']);
         if (isset($data['startDate'])) $trip->setStartDate(new \DateTimeImmutable($data['startDate']));
-        if (isset($data['endDate'])) $trip->setEndDate(new \DateTimeImmutable($data['endDate']));
-        if (isset($data['destination'])) $trip->setDestination($data['destination']);
-        
+        if (isset($data['endDate'])) $trip->setEndDate(new \DateTimeImmutable($data['endDate']));        
         $entityManager->persist($trip);
         $entityManager->flush();
 

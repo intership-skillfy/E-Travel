@@ -2,13 +2,13 @@
 
 namespace App\Entity;
 
-use App\Repository\CategoryRepository;
+use App\Repository\DestinationRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: CategoryRepository::class)]
-class Category
+#[ORM\Entity(repositoryClass: DestinationRepository::class)]
+class Destination
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -21,7 +21,7 @@ class Category
     /**
      * @var Collection<int, Offre>
      */
-    #[ORM\ManyToMany(targetEntity: Offre::class, mappedBy: 'categories')]
+    #[ORM\OneToMany(targetEntity: Offre::class, mappedBy: 'destination')]
     private Collection $offres;
 
     public function __construct()
@@ -58,7 +58,7 @@ class Category
     {
         if (!$this->offres->contains($offre)) {
             $this->offres->add($offre);
-            $offre->addCategory($this);
+            $offre->setDestination($this);
         }
 
         return $this;
@@ -67,11 +67,12 @@ class Category
     public function removeOffre(Offre $offre): static
     {
         if ($this->offres->removeElement($offre)) {
-            $offre->removeCategory($this);
+            // set the owning side to null (unless already changed)
+            if ($offre->getDestination() === $this) {
+                $offre->setDestination(null);
+            }
         }
 
         return $this;
     }
-
-
 }

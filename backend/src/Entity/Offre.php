@@ -45,21 +45,13 @@ class Offre
     private ?\DateTimeImmutable $end_date = null;
 
 
-
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $destination = null;
-
-    #[ORM\ManyToOne(inversedBy: 'offres')]
-    private ?Category $category = null;
-
     /**
      * @var Collection<int, PriceList>
      */
     #[ORM\OneToMany(targetEntity: PriceList::class, mappedBy: 'offre')]
     private Collection $tarifs;
 
-    #[ORM\ManyToOne(inversedBy: 'offres')]
-    private ?Pack $pack = null;
+
 
     /**
      * @var Collection<int, Reservation>
@@ -77,6 +69,18 @@ class Offre
     #[ORM\OneToMany(targetEntity: Review::class, mappedBy: 'offre')]
     private Collection $review;
 
+    /**
+     * @var Collection<int, category>
+     */
+    #[ORM\ManyToMany(targetEntity: category::class, inversedBy: 'offres')]
+    private Collection $categories;
+
+    #[ORM\ManyToOne(inversedBy: 'offres')]
+    private ?destination $destination = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $banner = null;
+
 
 
    
@@ -85,6 +89,7 @@ class Offre
         $this->tarifs = new ArrayCollection();
         $this->reservation = new ArrayCollection();
         $this->review = new ArrayCollection();
+        $this->categories = new ArrayCollection();
         
     }
 
@@ -166,30 +171,6 @@ class Offre
     }
 
 
-    public function getDestination(): ?string
-    {
-        return $this->destination;
-    }
-
-    public function setDestination(?string $destination): static
-    {
-        $this->destination = $destination;
-
-        return $this;
-    }
-
-    public function getCategory(): ?Category
-    {
-        return $this->category;
-    }
-
-    public function setCategory(?Category $category): static
-    {
-        $this->category = $category;
-
-        return $this;
-    }
-
     /**
      * @return Collection<int, PriceList>
      */
@@ -219,19 +200,6 @@ class Offre
 
         return $this;
     }
-
-    public function getPack(): ?Pack
-    {
-        return $this->pack;
-    }
-
-    public function setPack(?Pack $pack): static
-    {
-        $this->pack = $pack;
-
-        return $this;
-    }
-
     /**
      * @return Collection<int, Reservation>
      */
@@ -294,6 +262,54 @@ class Offre
                 $review->setOffre(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, category>
+     */
+    public function getCategories(): Collection
+    {
+        return $this->categories;
+    }
+
+    public function addCategory(category $category): static
+    {
+        if (!$this->categories->contains($category)) {
+            $this->categories->add($category);
+        }
+
+        return $this;
+    }
+
+    public function removeCategory(category $category): static
+    {
+        $this->categories->removeElement($category);
+
+        return $this;
+    }
+
+    public function getDestination(): ?destination
+    {
+        return $this->destination;
+    }
+
+    public function setDestination(?destination $destination): static
+    {
+        $this->destination = $destination;
+
+        return $this;
+    }
+
+    public function getBanner(): ?string
+    {
+        return $this->banner;
+    }
+
+    public function setBanner(string $banner): static
+    {
+        $this->banner = $banner;
 
         return $this;
     }
