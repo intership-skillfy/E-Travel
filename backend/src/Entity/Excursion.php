@@ -10,18 +10,18 @@ class Excursion extends Offre
 {
 
     #[ORM\Column]
-    private ?bool $included = null;
+    private ?bool $extra = null;
 
  
 
-    public function isIncluded(): ?bool
+    public function isExtra(): ?bool
     {
-        return $this->included;
+        return $this->extra;
     }
 
-    public function setIncluded(bool $included): static
+    public function setExtra(bool $extra): static
     {
-        $this->included = $included;
+        $this->extra = $extra;
 
         return $this;
     }

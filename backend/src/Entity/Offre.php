@@ -81,6 +81,12 @@ class Offre
     #[ORM\Column(length: 255)]
     private ?string $banner = null;
 
+    #[ORM\Column(length: 255)]
+    private ?string $included = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $no_included = null;
+
 
 
    
@@ -310,6 +316,30 @@ class Offre
     public function setBanner(string $banner): static
     {
         $this->banner = $banner;
+
+        return $this;
+    }
+
+    public function getIncluded(): ?string
+    {
+        return $this->included;
+    }
+
+    public function setIncluded(string $included): static
+    {
+        $this->included = $included;
+
+        return $this;
+    }
+
+    public function getNoIncluded(): ?string
+    {
+        return $this->no_included;
+    }
+
+    public function setNoIncluded(string $no_included): static
+    {
+        $this->no_included = $no_included;
 
         return $this;
     }
