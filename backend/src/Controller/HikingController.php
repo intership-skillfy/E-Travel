@@ -16,7 +16,7 @@ use Nelmio\ApiDocBundle\Annotation\Security;
 #[Route('/api/hiking'), name('app_hiking_')]
 class HikingController extends AbstractController
 {
-    #[Route('/', name: 'index', methods: ['GET'])]
+    #[Route('/', name: 'hiking', methods: ['GET'])]
     #[OA\Tag(name: 'Hikings')]
     public function index(HikingRepository $hikingRepository, SerializerService $serializerService): JsonResponse
     {
@@ -25,8 +25,7 @@ class HikingController extends AbstractController
 
         return new JsonResponse(['success' => true, 'hikings' => $hikingsArray]);
     }
-
-    #[Route('/{id}', name: 'show', methods: ['GET'])]
+    #[Route('/{id}', name: 'show_hiking', methods: ['GET'])]
     #[OA\Tag(name: 'Hikings')]
     public function show(id $id, SerializerService $serializerService, EntityManagerInterface $entityManager): JsonResponse
     {
@@ -36,7 +35,7 @@ class HikingController extends AbstractController
         return new JsonResponse(['success' => true, 'hiking' => $hikingArray]);
     }
 
-    #[Route('/', name: 'create', methods: ['POST'])]
+    #[Route('/', name: 'create_hiking', methods: ['POST'])]
     #[OA\Tag(name: 'Hikings')]
     #[OA\RequestBody(
         required: true,
@@ -76,7 +75,7 @@ class HikingController extends AbstractController
         return new JsonResponse(['success' => true, 'hiking' => $hikingArray], 201);
     }
 
-    #[Route('/{id}', name: 'delete', methods: ['DELETE'])]
+    #[Route('/{id}', name: 'delete_hiking', methods: ['DELETE'])]
     #[OA\Tag(name: 'Hikings')]
     public function delete(id $id, EntityManagerInterface $entityManager): JsonResponse
     {
