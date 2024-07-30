@@ -1,0 +1,12 @@
+/* Ensure the card-header uses flexbox and aligns items correctly */
+.card-header {
+    display: flex;
+    justify-content:space-between; /* Pushes items to the edges */
+    align-items: center; 
+    padding-left: 4px;/* Aligns items vertically centered */
+  }
+  
+  .card-toolbar {
+    text-align: right; /* Optional: Ensures text alignment in the toolbar */
+  }
+  
