@@ -6,6 +6,7 @@ use App\Repository\DestinationRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: DestinationRepository::class)]
 class Destination
@@ -13,9 +14,11 @@ class Destination
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(["offre:read", "offre:write"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["offre:read", "offre:write"])]
     private ?string $name = null;
 
     /**
@@ -66,7 +69,8 @@ class Destination
 
     public function removeOffre(Offre $offre): static
     {
-        if ($this->offres->removeElement($offre)) {
+        if ($this->offres->removeElement($offre)
+        ) {
             // set the owning side to null (unless already changed)
             if ($offre->getDestination() === $this) {
                 $offre->setDestination(null);

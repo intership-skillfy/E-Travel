@@ -6,6 +6,7 @@ use App\Repository\PriceListRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: PriceListRepository::class)]
 class PriceList
@@ -13,16 +14,20 @@ class PriceList
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(["offre:read", "offre:write"])]
     private ?int $id = null;
 
     #[ORM\Column]
+    #[Groups(["offre:read", "offre:write"])]
     private ?\DateTimeImmutable $start_date = null;
 
     #[ORM\Column]
+    #[Groups(["offre:read", "offre:write"])]
     private ?\DateTimeImmutable $end_date = null;
 
 
     #[ORM\Column]
+    #[Groups(["offre:read", "offre:write"])]
     private ?float $price = null;
 
     #[ORM\ManyToOne(inversedBy: 'tarifs')]
@@ -31,7 +36,7 @@ class PriceList
     /**
      * @var Collection<int, hotel>
      */
-    #[ORM\ManyToMany(targetEntity: hotel::class, inversedBy: 'priceLists')]
+    #[ORM\ManyToMany(targetEntity: Hotel::class, inversedBy: 'priceLists')]
     private Collection $hotels;
 
     public function __construct()

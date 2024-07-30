@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\InheritanceType('JOINED')]
 #[ORM\DiscriminatorColumn(name: 'type', type: 'string')]
@@ -16,87 +17,82 @@ use Doctrine\ORM\Mapping as ORM;
     'omra' => Omra::class,
     'trip' => Trip::class,
 ])]
-
-
 #[ORM\Entity(repositoryClass: OffreRepository::class)]
 class Offre
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(["offre:read", "offre:write"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["offre:read", "offre:write"])]
     private ?string $name = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["offre:read", "offre:write"])]
     private ?string $description = null;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[Groups(["offre:read", "offre:write"])]
     private ?string $detailed_description = null;
 
     #[ORM\Column(type: Types::ARRAY)]
+    #[Groups(["offre:read", "offre:write"])]
     private array $images = [];
 
     #[ORM\Column]
+    #[Groups(["offre:read", "offre:write"])]
     private ?\DateTimeImmutable $start_date = null;
 
     #[ORM\Column]
+    #[Groups(["offre:read", "offre:write"])]
     private ?\DateTimeImmutable $end_date = null;
 
-
-    /**
-     * @var Collection<int, PriceList>
-     */
-    #[ORM\OneToMany(targetEntity: PriceList::class, mappedBy: 'offre')]
+    #[ORM\OneToMany(targetEntity: PriceList::class, mappedBy: 'offre', cascade: ['persist', 'remove'])]
+    #[Groups(["offre:read", "offre:write"])]
     private Collection $tarifs;
 
-
-
-    /**
-     * @var Collection<int, Reservation>
-     */
-    #[ORM\ManyToMany(targetEntity: Reservation::class, inversedBy: 'offres')]
+    #[ORM\ManyToMany(targetEntity: Reservation::class, inversedBy: 'offres', cascade: ['persist', 'remove'])]
+    #[Groups(["offre:read", "offre:write"])]
     private Collection $reservation;
 
-    #[ORM\ManyToOne(inversedBy: 'offres')]
+    #[ORM\ManyToOne(inversedBy: 'offres', cascade: ['persist'])]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(["offre:read", "offre:write"])]
     private ?Agency $agency = null;
 
-    /**
-     * @var Collection<int, Review>
-     */
-    #[ORM\OneToMany(targetEntity: Review::class, mappedBy: 'offre')]
+    #[ORM\OneToMany(targetEntity: Review::class, mappedBy: 'offre', cascade: ['persist', 'remove'])]
+    #[Groups(["offre:read", "offre:write"])]
     private Collection $review;
 
-    /**
-     * @var Collection<int, category>
-     */
-    #[ORM\ManyToMany(targetEntity: category::class, inversedBy: 'offres')]
+    #[ORM\ManyToMany(targetEntity: Category::class, inversedBy: 'offres', cascade: ['persist'])]
+    #[Groups(["offre:read", "offre:write"])]
     private Collection $categories;
 
-    #[ORM\ManyToOne(inversedBy: 'offres')]
-    private ?destination $destination = null;
+    #[ORM\ManyToOne(inversedBy: 'offres', cascade: ['persist'])]
+    #[Groups(["offre:read", "offre:write"])]
+    private ?Destination $destination = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["offre:read", "offre:write"])]
     private ?string $banner = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["offre:read", "offre:write"])]
     private ?string $included = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["offre:read", "offre:write"])]
     private ?string $no_included = null;
 
-
-
-   
     public function __construct()
     {
         $this->tarifs = new ArrayCollection();
         $this->reservation = new ArrayCollection();
         $this->review = new ArrayCollection();
         $this->categories = new ArrayCollection();
-        
     }
 
     public function getId(): ?int
@@ -176,7 +172,6 @@ class Offre
         return $this;
     }
 
-
     /**
      * @return Collection<int, PriceList>
      */
@@ -206,6 +201,7 @@ class Offre
 
         return $this;
     }
+
     /**
      * @return Collection<int, Reservation>
      */
@@ -343,7 +339,4 @@ class Offre
 
         return $this;
     }
-     
 }
-
-

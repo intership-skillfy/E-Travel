@@ -44,9 +44,6 @@ class GuideArticle
     #[ORM\ManyToOne(inversedBy: 'article')]
     private ?Admin $admin_article = null;
 
-    #[Groups("full")]
-    #[ORM\ManyToOne(inversedBy: 'article')]
-    private ?Client $client = null;
 
     public function getId(): ?int
     {
@@ -137,15 +134,5 @@ class GuideArticle
         return $this;
     }
 
-    public function getAgent(): ?Agent
-    {
-        return $this->agent;
-    }
 
-    public function setAgent(?Agent $agent): static
-    {
-        $this->agent = $agent;
-
-        return $this;
-    }
 }

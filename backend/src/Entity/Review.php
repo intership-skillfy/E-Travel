@@ -6,7 +6,7 @@ use App\Repository\ReviewRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
-
+use Symfony\Component\Serializer\Attribute\Groups as AttributeGroups;
 
 #[ORM\Entity(repositoryClass: ReviewRepository::class)]
 class Review
@@ -14,17 +14,21 @@ class Review
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[AttributeGroups(["offre:read", "offre:write"])]
     private ?int $id = null;
 
     #[Groups("full")]
     #[ORM\Column(length: 255)]
+    #[Groups(["offre:read", "offre:write"])]
     private ?string $comment = null;
 
     #[Groups("full")]
     #[ORM\Column]
+    #[Groups(["offre:read", "offre:write"])]
     private ?int $rating = null;
 
     #[ORM\Column]
+    #[Groups(["offre:read", "offre:write"])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'reviews', cascade: ['persist', 'remove'])]
