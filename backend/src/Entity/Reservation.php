@@ -17,26 +17,32 @@ class Reservation
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(["offre:read", "offre:write"])]
     private ?int $id = null;
 
     #[Groups("full")]
     #[ORM\Column]
+    #[Groups(["offre:read", "offre:write"])]
     private ?\DateTimeImmutable $reservationDate = null;
 
     #[Groups("full")]
     #[ORM\Column]
+    #[Groups(["offre:read", "offre:write"])]
     private ?float $amount = null;
 
 
     #[Groups("full")]
+    #[Groups(["offre:read", "offre:write"])]
     #[ORM\Column(length: 255)]
     private ?string $status = null;
 
 
     #[ORM\ManyToOne(inversedBy: 'reservations')]
+    #[Groups(["offre:read", "offre:write"])]
     private ?Client $client = null;
 
     #[ORM\Column]
+    #[Groups(["offre:read", "offre:write"])]
     private ?int $nbr_person = null;
 
     #[ORM\ManyToOne(inversedBy: 'reservation')]

@@ -28,9 +28,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(["offre:read", "offre:write"])]
     protected ?int $id = null;
 
     #[ORM\Column(length: 180)]
+    #[Groups(["offre:read", "offre:write"])]
     private ?string $email = null;
 
     /**
@@ -46,6 +48,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $password = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["offre:read", "offre:write"])]
     private ?string $name = null;
 
     public function getId(): ?int

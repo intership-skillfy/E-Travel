@@ -1,5 +1,4 @@
-<?php 
-
+<?php
 namespace App\Service;
 
 use App\Entity\Offre;
@@ -7,6 +6,8 @@ use App\Entity\Category;
 use App\Entity\Agent;
 use App\Entity\Excursion;
 use App\Entity\Hiking;
+use App\Entity\Omra;
+use App\Entity\Trip;
 
 class SerializerService
 {
@@ -21,8 +22,8 @@ class SerializerService
                 'images' => $entity->getImages(),
                 'startDate' => $entity->getStartDate()->format('Y-m-d H:i:s'),
                 'endDate' => $entity->getEndDate()->format('Y-m-d H:i:s'),
-                'destination' => $entity->getDestination(),
-                'category' => $entity->getCategory() ? $entity->getCategory()->getName() : null,
+                'destination' => $entity->getDestination() ? $this->serialize($entity->getDestination()) : null,
+                'categories' => $this->serializeArray($entity->getCategories()->toArray()),
                 'tarifs' => $this->serializeArray($entity->getTarifs()->toArray()),
             ];
         }
@@ -62,14 +63,19 @@ class SerializerService
                 'images' => $entity->getImages(),
                 'startDate' => $entity->getStartDate()->format('Y-m-d H:i:s'),
                 'endDate' => $entity->getEndDate()->format('Y-m-d H:i:s'),
-                'destination' => $entity->getDestination(),
-                'category' => $entity->getCategory() ? $entity->getCategory()->getName() : null,
+                'destination' => $entity->getDestination() ? $this->serialize($entity->getDestination()) : null,
+                'categories' => $this->serializeArray($entity->getCategories()->toArray()),
                 'tarifs' => $this->serializeArray($entity->getTarifs()->toArray()),
-                'included' => $entity->isIncluded(),
+                'included' => $entity->isExtra(),
             ];
         }
 
         if ($entity instanceof Hiking) {
+            // Debugging destination and tarifs
+            $destination = $entity->getDestination();
+            $categories = $entity->getCategories()->toArray();
+            $tarifs = $entity->getTarifs()->toArray();
+
             return [
                 'id' => $entity->getId(),
                 'name' => $entity->getName(),
@@ -78,9 +84,9 @@ class SerializerService
                 'images' => $entity->getImages(),
                 'startDate' => $entity->getStartDate()->format('Y-m-d H:i:s'),
                 'endDate' => $entity->getEndDate()->format('Y-m-d H:i:s'),
-                'destination' => $entity->getDestination(),
-                'category' => $entity->getCategory() ? $entity->getCategory()->getName() : null,
-                'tarifs' => $this->serializeArray($entity->getTarifs()->toArray()),
+                'destination' => $destination ? $this->serialize($destination) : null,
+                'categories' => $this->serializeArray($categories),
+                'tarifs' => $this->serializeArray($tarifs),
                 'difficulty' => $entity->getDifficulty(),
             ];
         }
@@ -94,11 +100,12 @@ class SerializerService
                 'images' => $entity->getImages(),
                 'startDate' => $entity->getStartDate()->format('Y-m-d H:i:s'),
                 'endDate' => $entity->getEndDate()->format('Y-m-d H:i:s'),
-                'destination' => $entity->getDestination(),
+                'destination' => $entity->getDestination() ? $this->serialize($entity->getDestination()) : null,
                 'category' => $entity->getCategory() ? $entity->getCategory()->getName() : null,
                 'tarifs' => $this->serializeArray($entity->getTarifs()->toArray()),
             ];
         }
+
         if ($entity instanceof Trip) {
             return [
                 'id' => $entity->getId(),
@@ -108,7 +115,7 @@ class SerializerService
                 'images' => $entity->getImages(),
                 'startDate' => $entity->getStartDate()->format('Y-m-d H:i:s'),
                 'endDate' => $entity->getEndDate()->format('Y-m-d H:i:s'),
-                'destination' => $entity->getDestination(),
+                'destination' => $entity->getDestination() ? $this->serialize($entity->getDestination()) : null,
                 'category' => $entity->getCategory() ? $entity->getCategory()->getName() : null,
                 'tarifs' => $this->serializeArray($entity->getTarifs()->toArray()),
             ];

@@ -6,20 +6,25 @@ use App\Repository\AgencyRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: AgencyRepository::class)]
 class Agency extends User
 {
     #[ORM\Column(length: 255)]
+    #[Groups(["offre:read", "offre:write"])]
     private ?string $addresse = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["offre:read", "offre:write"])]
     private ?string $phone = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(["offre:read", "offre:write"])]
     private ?string $website = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["offre:read", "offre:write"])]
     private ?string $logo_url = null;
 
     /**
@@ -38,6 +43,7 @@ class Agency extends User
      * @var Collection<int, Offre>
      */
     #[ORM\OneToMany(targetEntity: Offre::class, mappedBy: 'agency')]
+    
     private Collection $offres;
 
   

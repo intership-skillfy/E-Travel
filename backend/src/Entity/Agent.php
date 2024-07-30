@@ -19,7 +19,6 @@ class Agent extends User
 
     public function __construct()
     {
-        $this->article = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -54,30 +53,8 @@ class Agent extends User
     /**
      * @return Collection<int, GuideArticle>
      */
-    public function getArticle(): Collection
-    {
-        return $this->article;
-    }
+  
 
-    public function addArticle(GuideArticle $article): static
-    {
-        if (!$this->article->contains($article)) {
-            $this->article->add($article);
-            $article->setAgent($this);
-        }
-
-        return $this;
-    }
-
-    public function removeArticle(GuideArticle $article): static
-    {
-        if ($this->article->removeElement($article)) {
-            // set the owning side to null (unless already changed)
-            if ($article->getAgent() === $this) {
-                $article->setAgent(null);
-            }
-        }
-
-        return $this;
-    }
+ 
+    
 }
