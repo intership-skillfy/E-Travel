@@ -8,34 +8,26 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-
 #[ORM\Entity(repositoryClass: ReservationRepository::class)]
 class Reservation
-
 {
-    #[Groups("full")]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(["offre:read", "offre:write"])]
+    #[Groups(["full", "offre:read", "offre:write"])]
     private ?int $id = null;
 
-    #[Groups("full")]
     #[ORM\Column]
-    #[Groups(["offre:read", "offre:write"])]
+    #[Groups(["full", "offre:read", "offre:write"])]
     private ?\DateTimeImmutable $reservationDate = null;
 
-    #[Groups("full")]
     #[ORM\Column]
-    #[Groups(["offre:read", "offre:write"])]
+    #[Groups(["full", "offre:read", "offre:write"])]
     private ?float $amount = null;
 
-
-    #[Groups("full")]
-    #[Groups(["offre:read", "offre:write"])]
     #[ORM\Column(length: 255)]
+    #[Groups(["full", "offre:read", "offre:write"])]
     private ?string $status = null;
-
 
     #[ORM\ManyToOne(inversedBy: 'reservations')]
     #[Groups(["offre:read", "offre:write"])]
@@ -124,7 +116,6 @@ class Reservation
         return $this;
     }
 
- 
     public function getHistory(): ?History
     {
         return $this->history;

@@ -6,7 +6,6 @@ use App\Repository\ReviewRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Serializer\Attribute\Groups as AttributeGroups;
 
 #[ORM\Entity(repositoryClass: ReviewRepository::class)]
 class Review
@@ -14,17 +13,15 @@ class Review
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[AttributeGroups(["offre:read", "offre:write"])]
+    #[Groups(["offre:read", "offre:write"])]
     private ?int $id = null;
 
-    #[Groups("full")]
     #[ORM\Column(length: 255)]
-    #[Groups(["offre:read", "offre:write"])]
+    #[Groups(["full", "offre:read", "offre:write"])]
     private ?string $comment = null;
 
-    #[Groups("full")]
     #[ORM\Column]
-    #[Groups(["offre:read", "offre:write"])]
+    #[Groups(["full", "offre:read", "offre:write"])]
     private ?int $rating = null;
 
     #[ORM\Column]
@@ -33,7 +30,7 @@ class Review
 
     #[ORM\ManyToOne(inversedBy: 'reviews', cascade: ['persist', 'remove'])]
     private ?Client $client = null;
-    
+
     #[ORM\ManyToOne(inversedBy: 'reviews', cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false)]
     private ?Offre $offre = null;
@@ -43,7 +40,6 @@ class Review
         $this->createdAt = new \DateTimeImmutable(); // Set createdAt to the current date and time
     }
 
-   
     public function getId(): ?int
     {
         return $this->id;
@@ -84,8 +80,6 @@ class Review
         return $this;
     }
 
-    
-
     public function getClient(): ?Client
     {
         return $this->client;
@@ -109,6 +103,4 @@ class Review
 
         return $this;
     }
-
-  
 }
