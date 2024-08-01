@@ -13,6 +13,7 @@ use App\Entity\Offre;
 use App\Repository\OffreRepository;
 use App\Service\SerializerService;
 use Doctrine\ORM\EntityManagerInterface;
+use Nelmio\ApiDocBundle\Annotation\Model;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,6 +22,9 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use OpenApi\Attributes as OA;
+
+use function Symfony\Component\DependencyInjection\Loader\Configurator\param;
 
 #[Route('/api/offres')]
 class OffreController extends AbstractController
@@ -28,17 +32,30 @@ class OffreController extends AbstractController
     private EntityManagerInterface $entityManager;
     private SerializerInterface $serializer;
     private ValidatorInterface $validator;
-    private SerializerService $serializerService;
 
-    public function __construct(EntityManagerInterface $entityManager, SerializerInterface $serializer, ValidatorInterface $validator, SerializerService $serializerService)
+    public function __construct(EntityManagerInterface $entityManager, SerializerInterface $serializer, ValidatorInterface $validator)
     {
         $this->entityManager = $entityManager;
         $this->serializer = $serializer;
         $this->validator = $validator;
-        $this->serializerService = $serializerService;
     }
 
     #[Route('/new', name: 'api_offre_new', methods: ['POST'])]
+    #[OA\Tag(name: 'Offer')]
+    #[OA\RequestBody(
+        required: true,
+        content: new OA\JsonContent(
+            type: 'object',
+            properties: [
+                new OA\Property(property: 'name', type: 'string'),
+                new OA\Property(property: 'description', type: 'string'),
+                new OA\Property(property: 'detailedDescription', type: 'string'),
+                new OA\Property(property: 'images', type: 'array', items: new OA\Items(type: 'string')),
+                new OA\Property(property: 'startDate', type: 'string'),
+                new OA\Property(property: 'endDate', type: 'string'),
+                new OA\Property(property: 'destination', type: 'string'),            ]
+        )
+    )]
     public function new(Request $request): JsonResponse
     {
         $type = $request->query->get('type');
@@ -95,6 +112,19 @@ class OffreController extends AbstractController
     }
 
     #[Route('/{id}', name: 'api_offre_show', methods: ['GET'])]
+    #[OA\Tag(name: 'Offer')]
+    #[OA\Parameter(
+        name: 'id',
+        in: 'path',
+        description: 'ID of the offer to retrieve',
+        required: true,
+        schema: new OA\Schema(type: 'integer')
+    )]
+    #[OA\Response(
+        response: 200,
+        description: 'Returns a single offer',
+        content: new OA\JsonContent(ref: new Model(type: Excursion::class))
+    )]
     public function show(Offre $offre): JsonResponse
     {
         $data = $this->serializer->serialize($offre, 'json', [
@@ -107,6 +137,35 @@ class OffreController extends AbstractController
 
 
     #[Route('/{id}/edit', name: 'api_offre_edit', methods: ['PUT'])]
+    #[OA\Tag(name: 'Offer')]
+    #[OA\Parameter(
+        name: 'id',
+        in: 'path',
+        description: 'ID of the offer to update',
+        required: true,
+        schema: new OA\Schema(type: 'integer')
+    )]
+    #[OA\RequestBody(
+        required: true,
+        content: new OA\JsonContent(
+            type: 'object',
+            properties: [
+                new OA\Property(property: 'name', type: 'string'),
+                new OA\Property(property: 'detailedDescription', type: 'string'),
+                new OA\Property(property: 'description', type: 'string'),
+                new OA\Property(property: 'banner', type: 'string'),
+                new OA\Property(property: 'images', type: 'array', items: new OA\Items(type: 'string')),
+                new OA\Property(property: 'startDate', type: 'string'),
+                new OA\Property(property: 'endDate', type: 'string'),
+                new OA\Property(property: 'destination', type: 'string'),
+            ]
+        )
+    )]
+    #[OA\Response(
+        response: 200,
+        description: 'Updates information of an offer',
+        content: new OA\JsonContent(ref: new Model(type: Excursion::class))
+    )]
     public function edit(Request $request, Offre $offre): JsonResponse
     {
         $type = $this->getTypeByOffre($offre);
@@ -129,14 +188,19 @@ class OffreController extends AbstractController
     }
 
     #[Route('/', name: 'api_offre_index', methods: ['GET'])]
-    public function index(OffreRepository $offreRepository, SerializerInterface $serializer): JsonResponse
-{
-    // Fetch all offers
-    $offres = $offreRepository->findAll();
-    
-    // Create an array with offers data including the type
-    $offersData = array_map(function($offre) use ($serializer) {
-        $data = $serializer->normalize($offre, null, [
+    #[OA\Tag(name: 'Offer')]
+    #[OA\Response(
+        response: 200,
+        description: 'Returns list of offers',
+        content: new OA\JsonContent(
+            type: 'array',
+            items: new OA\Items(ref: new Model(type: Excursion::class))
+        )
+    )]
+    public function index(OffreRepository $offreRepository): JsonResponse
+    {
+        $offres = $offreRepository->findAll();
+        $data = $this->serializer->serialize($offres, 'json', [
             AbstractNormalizer::GROUPS => ['offre:read']
         ]);
         $data['type'] = $offre->getType(); // Add the type to the data
@@ -148,7 +212,19 @@ class OffreController extends AbstractController
     return new JsonResponse($data, 200, [], true);
 }                  
 
-    #[Route('/{id}', name: 'api_offre_delete', methods: ['DELETE'])]
+    #[Route('/{id}/delete', name: 'api_offre_delete', methods: ['DELETE'])]
+    #[OA\Tag(name: 'Offer')]
+    #[OA\Parameter(
+        name: 'id',
+        in: 'path',
+        description: 'ID of the offer to delete',
+        required: true,
+        schema: new OA\Schema(type: 'integer')
+    )]
+    #[OA\Response(
+        response: 204,
+        description: 'Deletes an offer'
+    )]
     public function delete(Offre $offre): JsonResponse
     {
         $this->entityManager->remove($offre);
