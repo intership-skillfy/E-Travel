@@ -10,7 +10,8 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { AuthService } from './modules/auth/services/auth.service';
-import { HttpClientModule } from '@angular/common/http'; // Import this
+import { HttpClientModule } from '@angular/common/http';
+ // Import this
 
 import { environment } from 'src/environments/environment';
 // #fake-start#
@@ -31,6 +32,8 @@ function appInitializer(authService: AuthService) {
         BrowserAnimationsModule,
         TranslateModule.forRoot(),
         ClipboardModule,
+        HttpClientModule,
+
         // #fake-start#
         environment.isMockEnabled
             ? HttpClientInMemoryWebApiModule.forRoot(FakeAPIService, {

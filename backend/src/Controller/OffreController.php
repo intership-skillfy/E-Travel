@@ -129,15 +129,24 @@ class OffreController extends AbstractController
     }
 
     #[Route('/', name: 'api_offre_index', methods: ['GET'])]
-    public function index(OffreRepository $offreRepository): JsonResponse
-    {
-        $offres = $offreRepository->findAll();
-        $data = $this->serializer->serialize($offres, 'json', [
+    public function index(OffreRepository $offreRepository, SerializerInterface $serializer): JsonResponse
+{
+    // Fetch all offers
+    $offres = $offreRepository->findAll();
+    
+    // Create an array with offers data including the type
+    $offersData = array_map(function($offre) use ($serializer) {
+        $data = $serializer->normalize($offre, null, [
             AbstractNormalizer::GROUPS => ['offre:read']
         ]);
-
-        return new JsonResponse($data, 200, [], true);
-    }
+        $data['type'] = $offre->getType(); // Add the type to the data
+        return $data;
+    }, $offres);
+    
+    $data = json_encode($offersData);
+    
+    return new JsonResponse($data, 200, [], true);
+}                  
 
     #[Route('/{id}', name: 'api_offre_delete', methods: ['DELETE'])]
     public function delete(Offre $offre): JsonResponse

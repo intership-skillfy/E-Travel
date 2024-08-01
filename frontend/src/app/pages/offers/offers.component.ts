@@ -1,7 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
-import { ExursionsComponent } from 'src/app/modules/exursions/exursions.component';
+import { ExcursionsComponent } from 'src/app/modules/excursions/excursions.component';
 import { RouterModule } from '@angular/router';
-import { ExursionsModule } from 'src/app/modules/exursions/exursions.module';
+import { ExcursionsModule } from 'src/app/modules/excursions/excursions.module';
 import { AppRoutingModule } from '../../app-routing.module';
 
 

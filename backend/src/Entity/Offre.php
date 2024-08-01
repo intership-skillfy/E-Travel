@@ -38,9 +38,9 @@ class Offre
     #[Groups(["offre:read", "offre:write"])]
     private ?string $detailed_description = null;
 
-    #[ORM\Column(type: Types::ARRAY)]
+    #[ORM\Column(type: Types::TEXT)]
     #[Groups(["offre:read", "offre:write"])]
-    private array $images = [];
+    private string $images ;
 
     #[ORM\Column]
     #[Groups(["offre:read", "offre:write"])]
@@ -136,7 +136,7 @@ class Offre
         return $this;
     }
 
-    public function getImages(): array
+    public function getImages(): string
     {
         return $this->images;
     }
@@ -339,4 +339,9 @@ class Offre
 
         return $this;
     }
+    public function getType(): string
+{
+    return (new \ReflectionClass($this))->getShortName();
+}
+
 }

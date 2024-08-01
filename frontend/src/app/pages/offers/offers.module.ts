@@ -8,9 +8,12 @@ import { OffersComponent } from './offers.component';
 import { OmraComponent } from './omra/omra.component';
 import { TripsComponent } from './trips/trips.component';
 import { HikingComponent } from './hiking/hiking.component';
-import { ExursionsPageComponent } from './exursions-page/exursions-page.component';
-import { ExursionsModule } from 'src/app/modules/exursions/exursions.module';
+import { ExcursionsPageComponent } from './excursions-page/excursions-page.component';
+import { ExcursionsModule } from 'src/app/modules/excursions/excursions.module';
 import { WidgetsModule } from "../../_metronic/partials/content/widgets/widgets.module";
+import { AddOfferComponent } from './forms/add-offer/add-offer.component';
+import { FormsModule } from '@angular/forms';
+
 
 @NgModule({
   declarations: [
@@ -18,15 +21,17 @@ import { WidgetsModule } from "../../_metronic/partials/content/widgets/widgets.
     OmraComponent,
     TripsComponent,
     HikingComponent,
-    ExursionsPageComponent
+    ExcursionsPageComponent,
+    AddOfferComponent
   ],
   imports: [
     CommonModule,
     ReactiveFormsModule,
     NgbTooltipModule,
     OffersRoutingModule,
-    ExursionsModule, 
-    WidgetsModule
+    ExcursionsModule, 
+    WidgetsModule,
+    FormsModule
   ],
 })
 export class OffersModule {}

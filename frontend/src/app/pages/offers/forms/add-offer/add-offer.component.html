@@ -1,0 +1,76 @@
+<form (ngSubmit)="onSubmit(form)" #form="ngForm" class="offer-form">
+    <!-- Common Fields -->
+    <div class="form-group">
+      <label for="name">Name</label>
+      <input type="text" id="name" name="name" ngModel required class="form-control">
+    </div>
+    
+    <div class="form-group">
+      <label for="agency_id">Agency ID</label>
+      <input type="text" id="agency_id" name="agency_id" ngModel required class="form-control">
+    </div>
+  
+    <div class="form-group">
+      <label for="categories">Categories</label>
+      <input type="text" id="categories" name="categories" ngModel class="form-control">
+    </div>
+  
+    <div class="form-group">
+      <label for="destination">Destination</label>
+      <input type="text" id="destination" name="destination" ngModel required class="form-control">
+    </div>
+  
+    <div class="form-group">
+      <label for="startDate">Start Date</label>
+      <input type="date" id="startDate" name="startDate" ngModel class="form-control">
+    </div>
+  
+    <div class="form-group">
+      <label for="endDate">End Date</label>
+      <input type="date" id="endDate" name="endDate" ngModel class="form-control">
+    </div>
+  
+    <div class="form-group">
+      <label for="banner">Banner URL</label>
+      <input type="text" id="banner" name="banner" ngModel class="form-control">
+    </div>
+  
+    <div class="form-group">
+      <label for="included">Included</label>
+      <textarea id="included" name="included" ngModel class="form-control"></textarea>
+    </div>
+  
+    <div class="form-group">
+      <label for="noIncluded">Not Included</label>
+      <textarea id="noIncluded" name="noIncluded" ngModel class="form-control"></textarea>
+    </div>
+  
+    <div class="form-group">
+      <label for="description">Description</label>
+      <textarea id="description" name="description" ngModel class="form-control"></textarea>
+    </div>
+  
+    <div class="form-group">
+      <label for="detailedDescription">Detailed Description</label>
+      <textarea id="detailedDescription" name="detailedDescription" ngModel class="form-control"></textarea>
+    </div>
+  
+    <div class="form-group">
+      <label for="images">Images (Comma Separated URLs)</label>
+      <input type="text" id="images" name="images" ngModel class="form-control">
+    </div>
+  
+    <!-- Type-Specific Fields -->
+    <div *ngIf="type === 'excursion'" class="form-group">
+      <label for="extra">Extra</label>
+      <input type="checkbox" id="extra" name="extra" ngModel class="form-check-input">
+    </div>
+  
+    <div *ngIf="type === 'hiking'" class="form-group">
+      <label for="difficulty">Difficulty</label>
+      <input type="text" id="difficulty" name="difficulty" ngModel class="form-control">
+    </div>
+  
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </form>
+  
