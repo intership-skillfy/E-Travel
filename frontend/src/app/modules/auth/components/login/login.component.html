@@ -58,16 +58,7 @@
   </div>
   <!--end::Separator-->
 
-  <!-- begin::Alert info-->
-  <ng-container *ngIf="!hasError">
-    <div class="mb-10 bg-light-info p-8 rounded">
-      <div class="text-info">
-        Use account <strong>{{ defaultAuth.email }}</strong> and password
-        <strong>{{ defaultAuth.password }}</strong> to continue.
-      </div>
-    </div>
-  </ng-container>
-  <!-- end::Alert info-->
+
 
 
   <!-- begin::Alert error-->
@@ -83,7 +74,7 @@
   <!--begin::Form group-->
   <div class="fv-row mb-8">
     <label class="form-label fs-6 fw-bolder text-gray-900">Email</label>
-    <input class="form-control bg-transparent" type="email" name="email" formControlName="email" autocomplete="off"
+    <input class="form-control bg-transparent" type="email" placeholder="Your email" name="email" formControlName="email" autocomplete="off"
       [ngClass]="{
         'is-invalid': loginForm.controls['email'].invalid,
         'is-valid': loginForm.controls['email'].valid
@@ -116,7 +107,7 @@
 
     <label class="form-label fw-bolder text-gray-900 fs-6 mb-0">Password</label>
 
-    <input class="form-control bg-transparent" type="password" name="password" autocomplete="off"
+    <input class="form-control bg-transparent" type="password" placeholder="*******" name="password" autocomplete="off"
       formControlName="password" [ngClass]="{
         'is-invalid': loginForm.controls['password'].invalid,
         'is-valid': loginForm.controls['password'].valid
@@ -170,7 +161,7 @@
   <div class="text-gray-500 text-center fw-semibold fs-6">
     Not a Member yet?
 
-    <a routerLink="/auth/registration" class="link-primary">
+    <a routerLink="/auth/signup" class="link-primary">
       Sign up
     </a>
   </div>
