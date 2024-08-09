@@ -1,0 +1,134 @@
+<form class="form w-100" novalidate="novalidate" id="kt_login_signup_form" [formGroup]="registrationForm" (ngSubmit)="submit()">
+    <div class="text-center mb-11">
+      <h1 class="text-gray-900 fw-bolder mb-3">Sign Up</h1>
+      <div class="text-gray-500 fw-semibold fs-6">Your Social Campaigns</div>
+    </div>
+  
+    <div class="row g-3 mb-9">
+      <div class="col-md-6">
+        <a href="#" class="btn btn-flex btn-outline btn-text-gray-700 btn-active-color-primary bg-state-light flex-center text-nowrap w-100">
+          <img alt="Logo" src="./assets/media/svg/brand-logos/google-icon.svg" class="h-15px me-3" />
+          Sign in with Google
+        </a>
+      </div>
+      <div class="col-md-6">
+        <a href="#" class="btn btn-flex btn-outline btn-text-gray-700 btn-active-color-primary bg-state-light flex-center text-nowrap w-100">
+          <img alt="Logo" src="./assets/media/svg/brand-logos/apple-black.svg" class="theme-light-show h-15px me-3" />
+          <img alt="Logo" src="./assets/media/svg/brand-logos/apple-black-dark.svg" class="theme-dark-show h-15px me-3" />
+          Sign in with Apple
+        </a>
+      </div>
+    </div>
+  
+    <div class="separator separator-content my-14"><span class="w-125px text-gray-500 fw-semibold fs-7">Or with email</span></div>
+  
+    <ng-container *ngIf="hasError">
+      <div class="mb-lg-15 alert alert-danger">
+        <div class="alert-text font-weight-bold">The registration details are incorrect</div>
+      </div>
+    </ng-container>
+  
+    <div class="fv-row mb-8">
+      <label class="form-label fw-bolder text-gray-900 fs-6">Name</label>
+      <input class="form-control bg-transparent" type="text" formControlName="name" placeholder="Name" autocomplete="off" [ngClass]="{
+          'is-invalid': registrationForm.controls['name'].invalid,
+          'is-valid': registrationForm.controls['name'].valid
+        }" />
+      <ng-container [ngTemplateOutlet]="formError" [ngTemplateOutletContext]="{ validation: 'required', message: 'Name is required', control: registrationForm.controls['name'] }"></ng-container>
+      <ng-container [ngTemplateOutlet]="formError" [ngTemplateOutletContext]="{ validation: 'minlength', message: 'Name should have at least 3 symbols', control: registrationForm.controls['name'] }"></ng-container>
+      <ng-container [ngTemplateOutlet]="formError" [ngTemplateOutletContext]="{ validation: 'maxlength', message: 'Name should have a maximum of 100 symbols', control: registrationForm.controls['name'] }"></ng-container>
+    </div>
+  
+    <div class="fv-row mb-8">
+      <label class="form-label fw-bolder text-gray-900 fs-6">Email</label>
+      <input class="form-control bg-transparent" type="email" placeholder="Email" formControlName="email" autocomplete="off" [ngClass]="{
+          'is-invalid': registrationForm.controls['email'].invalid,
+          'is-valid': registrationForm.controls['email'].valid
+        }" />
+      <ng-container [ngTemplateOutlet]="formError" [ngTemplateOutletContext]="{ validation: 'required', message: 'Email is required', control: registrationForm.controls['email'] }"></ng-container>
+      <ng-container [ngTemplateOutlet]="formError" [ngTemplateOutletContext]="{ validation: 'email', message: 'Email is invalid', control: registrationForm.controls['email'] }"></ng-container>
+      <ng-container [ngTemplateOutlet]="formError" [ngTemplateOutletContext]="{ validation: 'minlength', message: 'Email should have at least 3 symbols', control: registrationForm.controls['email'] }"></ng-container>
+      <ng-container [ngTemplateOutlet]="formError" [ngTemplateOutletContext]="{ validation: 'maxlength', message: 'Email should have a maximum of 320 symbols', control: registrationForm.controls['email'] }"></ng-container>
+    </div>
+  
+    <div class="fv-row mb-8">
+      <label class="form-label fw-bolder text-gray-900 fs-6">Password</label>
+      <input class="form-control bg-transparent" type="password" placeholder="Password" formControlName="password" autocomplete="off" [ngClass]="{
+          'is-invalid': registrationForm.controls['password'].invalid,
+          'is-valid': registrationForm.controls['password'].valid
+        }" />
+      <ng-container [ngTemplateOutlet]="formError" [ngTemplateOutletContext]="{ validation: 'required', message: 'Password is required', control: registrationForm.controls['password'] }"></ng-container>
+      <ng-container [ngTemplateOutlet]="formError" [ngTemplateOutletContext]="{ validation: 'minlength', message: 'Password should have at least 3 symbols', control: registrationForm.controls['password'] }"></ng-container>
+      <ng-container [ngTemplateOutlet]="formError" [ngTemplateOutletContext]="{ validation: 'maxlength', message: 'Password should have a maximum of 100 symbols', control: registrationForm.controls['password'] }"></ng-container>
+    </div>
+  
+    <div class="fv-row mb-8">
+      <label class="form-label fw-bolder text-gray-900 fs-6">Confirm Password</label>
+      <input class="form-control bg-transparent" type="password" placeholder="Password" formControlName="cPassword" autocomplete="off" [ngClass]="{
+          'is-invalid': registrationForm.controls['cPassword'].invalid,
+          'is-valid': registrationForm.controls['cPassword'].valid
+        }" />
+      <ng-container [ngTemplateOutlet]="formError" [ngTemplateOutletContext]="{ validation: 'required', message: 'Password is required', control: registrationForm.controls['cPassword'] }"></ng-container>
+      <ng-container [ngTemplateOutlet]="formError" [ngTemplateOutletContext]="{ validation: 'minlength', message: 'Password should have at least 3 symbols', control: registrationForm.controls['cPassword'] }"></ng-container>
+      <ng-container [ngTemplateOutlet]="formError" [ngTemplateOutletContext]="{ validation: 'maxlength', message: 'Password should have a maximum of 100 symbols', control: registrationForm.controls['cPassword'] }"></ng-container>
+    </div>
+  
+    <div class="fv-row mb-8">
+      <label class="form-label fw-bolder text-gray-900 fs-6">Phone</label>
+      <input class="form-control bg-transparent" type="text" placeholder="Phone" formControlName="phone" autocomplete="off" [ngClass]="{
+          'is-invalid': registrationForm.controls['phone'].invalid,
+          'is-valid': registrationForm.controls['phone'].valid
+        }" />
+      <ng-container [ngTemplateOutlet]="formError" [ngTemplateOutletContext]="{ validation: 'required', message: 'Phone is required', control: registrationForm.controls['phone'] }"></ng-container>
+    </div>
+  
+    <div class="fv-row mb-8">
+      <label class="form-label fw-bolder text-gray-900 fs-6">Address</label>
+      <input class="form-control bg-transparent" type="text" placeholder="Address" formControlName="addresse" autocomplete="off" [ngClass]="{
+          'is-invalid': registrationForm.controls['addresse'].invalid,
+          'is-valid': registrationForm.controls['addresse'].valid
+        }" />
+      <ng-container [ngTemplateOutlet]="formError" [ngTemplateOutletContext]="{ validation: 'required', message: 'Address is required', control: registrationForm.controls['addresse'] }"></ng-container>
+    </div>
+  
+    <div class="fv-row mb-8">
+      <label class="form-label fw-bolder text-gray-900 fs-6">Website</label>
+      <input class="form-control bg-transparent" type="text" placeholder="Website" formControlName="website" autocomplete="off" [ngClass]="{
+          'is-invalid': registrationForm.controls['website'].invalid,
+          'is-valid': registrationForm.controls['website'].valid
+        }" />
+      <ng-container [ngTemplateOutlet]="formError" [ngTemplateOutletContext]="{ validation: 'required', message: 'Website is required', control: registrationForm.controls['website'] }"></ng-container>
+    </div>
+  
+    <div class="fv-row mb-8">
+      <label class="form-label fw-bolder text-gray-900 fs-6">Logo</label>
+      <input class="form-control bg-transparent" type="file" (change)="onLogoChange($event)" />
+    </div>
+  
+    <div class="fv-row mb-8">
+      <label class="form-check form-check-custom form-check-solid form-check-inline">
+        <input class="form-check-input" formControlName="agree" type="checkbox" name="agree" value="1" />
+        <span class="form-check-label fw-semibold text-gray-700 fs-6">I Agree to the <a href="#" class="ms-1 link-primary">terms and conditions</a>.</span>
+      </label>
+      <ng-container [ngTemplateOutlet]="formError" [ngTemplateOutletContext]="{ validation: 'requiredTrue', message: 'You must agree to the terms and conditions', control: registrationForm.controls['agree'] }"></ng-container>
+    </div>
+  
+    <div class="d-grid mb-10">
+      <button type="submit" id="kt_sign_up_submit" class="btn btn-primary" [disabled]="registrationForm.invalid">
+        <span class="indicator-label">Submit</span>
+        <span class="indicator-progress">Please wait...
+          <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
+      </button>
+    </div>
+  
+    <div class="text-gray-500 text-center fw-semibold fs-6">Already have an Account?
+      <a href="/auth/login" class="link-primary fw-semibold">Sign In</a>
+    </div>
+  </form>
+  
+  <ng-template #formError let-validation="validation" let-message="message" let-control="control">
+    <div *ngIf="control.errors?.[validation] && (control.dirty || control.touched)" class="fv-plugins-message-container">
+      <div class="fv-help-block">{{ message }}</div>
+    </div>
+  </ng-template>
+  
