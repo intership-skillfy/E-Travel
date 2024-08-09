@@ -10,6 +10,22 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { AuthService } from './modules/auth/services/auth.service';
+import { FormsModule } from '@angular/forms'; // Import FormsModule
+import { MatSelectModule } from '@angular/material/select';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { ReactiveFormsModule } from '@angular/forms';
+import { ModalFormComponent } from './modules/excursions/modal-form/modal-form.component';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialogModule } from '@angular/material/dialog';
+
+
+
+
+
+
+
+
 import { HttpClientModule } from '@angular/common/http';
  // Import this
 
@@ -27,12 +43,19 @@ function appInitializer(authService: AuthService) {
   };
 }
 
-@NgModule({ declarations: [AppComponent],
+@NgModule({ declarations: [AppComponent,],
     bootstrap: [AppComponent], imports: [BrowserModule,
         BrowserAnimationsModule,
         TranslateModule.forRoot(),
         ClipboardModule,
         HttpClientModule,
+        FormsModule,
+        MatFormFieldModule,
+        MatSelectModule,
+        MatIconModule,
+        ReactiveFormsModule,
+        MatButtonModule,
+        MatDialogModule,
 
         // #fake-start#
         environment.isMockEnabled

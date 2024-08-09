@@ -1,0 +1,115 @@
+@use '@angular/material' as mat;
+
+// Define your theme
+$my-theme: mat.define-light-theme(
+  (
+    color: (
+      primary: mat.define-palette(mat.$blue-grey-palette),
+      accent: mat.define-palette(mat.$pink-palette),
+      warn: mat.define-palette(mat.$red-palette)
+    ),
+    typography: mat.define-typography-config() // This line is optional and can be removed if you don't need custom typography
+  )
+);
+
+// Include Angular Material core styles
+@include mat.core();
+
+// Apply your theme
+@include mat.all-component-themes($my-theme);
+
+// Import other stylesheets
+// Replace above style with this css file to enable RTL styles
+// @import "./assets/css/style.rtl";
+
+// Ensure Angular Material overlay and select panel appear above Bootstrap modal
+::ng-deep .cdk-overlay-container {
+    z-index: 1050 !important; /* Ensure it's above modal */
+}
+  
+::ng-deep .mat-select-panel {
+    z-index: 1051 !important; /* Ensure it's above overlay */
+}
+  
+/* General modal styles */
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #dee2e6;
+    padding-bottom: 10px;
+    z-index: 1040; /* Adjust if needed */
+}
+  
+.modal-title {
+    font-size: 1.25rem;
+    font-weight: 500;
+}
+  
+.btn-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #000;
+}
+  
+.modal-body {
+    padding: 15px 0;
+}
+  
+.form-group {
+    margin-bottom: 1rem;
+    width: 90%;
+    margin-left: 5%;
+}
+  
+.form-control {
+    border-radius: 4px;
+    border: 1px solid #ced4da;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.075);
+}
+  
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    border-radius: 0.25rem;
+}
+  
+.btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #004085;
+}
+  
+.file-input {
+    display: none;
+}
+  
+.example-additional-selection {
+    opacity: 0.75;
+    font-size: 0.75em;
+}
+  
+.mat-form-field.full-width {
+    width: 100%;
+}
+  
+.mat-form-field-inline {
+    display: flex;
+    align-items: center;
+}
+  
+.mat-form-field-inline mat-form-field {
+    flex-grow: 1;
+    margin-left: 10px;
+}
+
+/* Ensure Angular Material overlay and select panel appear above Bootstrap modal */
+::ng-deep .cdk-overlay-container {
+  z-index: 2000 !important; /* Set a high value */
+}
+
+::ng-deep .mat-select-panel {
+  z-index: 2001 !important; /* Ensure it's above the overlay */
+}

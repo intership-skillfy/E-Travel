@@ -1,0 +1,153 @@
+<div class="card mb-5 mb-xl-10">
+    <div class="card-header border-0 cursor-pointer" role="button" data-bs-toggle="collapse" data-bs-target="#kt_excursion_details" aria-expanded="true" aria-controls="kt_excursion_details">
+      <div class="card-title m-0">
+        <h3 class="fw-bolder m-0">{{ currentOfferType | titlecase }} Details</h3>
+      </div>
+    </div>
+    <div id="kt_excursion_details" class="collapse show">
+      <form [formGroup]="form" (ngSubmit)="onSave()" novalidate class="form">
+        <div class="card-body border-top p-9">
+          <div class="row mb-6">
+            <label class="col-lg-4 col-form-label fw-bold fs-6">Banner</label>
+            <div class="col-lg-8">
+              <div class="image-input image-input-outline" data-kt-image-input="true" [style.background-image]="'url(./assets/media/avatars/blank.png)'">
+                <div class="image-input-wrapper w-125px h-125px" [style.background-image]="getBannerStyle()"></div>
+                <input type="file" (change)="onBannerChange($event)" accept=".png, .jpg, .jpeg">
+              </div>
+            </div>
+          </div>
+  
+          <div class="row mb-6">
+            <label class="col-lg-4 col-form-label required fw-bold fs-6">{{ currentOfferType | titlecase }} Name</label>
+            <div class="col-lg-8">
+              <input type="text" formControlName="name" class="form-control form-control-lg form-control-solid" placeholder="{{ currentOfferType | titlecase }} name">
+            </div>
+          </div>
+  
+          <div class="row mb-6">
+            <label class="col-lg-4 col-form-label required fw-bold fs-6">Destination</label>
+            <div class="col-lg-8">
+              <input type="text" formControlName="destination" class="form-control form-control-lg form-control-solid" placeholder="Destination">
+            </div>
+          </div>
+  
+          <div class="row mb-6">
+            <label class="col-lg-4 col-form-label required fw-bold fs-6">Categories</label>
+            <div class="col-lg-8">
+              <mat-form-field appearance="fill" class="w-100">
+                <mat-label>Categories</mat-label>
+                <mat-select formControlName="categories" multiple>
+                  <mat-option *ngFor="let category of availableCategories" [value]="category">{{ category | titlecase }}</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </div>
+  
+          <!-- Additional Fields -->
+          <div class="row mb-6">
+            <label class="col-lg-4 col-form-label fw-bold fs-6">Description</label>
+            <div class="col-lg-8">
+              <textarea formControlName="description" class="form-control form-control-lg form-control-solid" placeholder="Description"></textarea>
+            </div>
+          </div>
+  
+          <div class="row mb-6">
+            <label class="col-lg-4 col-form-label fw-bold fs-6">Detailed Description</label>
+            <div class="col-lg-8">
+              <textarea formControlName="detailedDescription" class="form-control form-control-lg form-control-solid" placeholder="Detailed Description"></textarea>
+            </div>
+          </div>
+          
+          <div class="row mb-6">
+            <label class="col-lg-4 col-form-label fw-bold fs-6">Included</label>
+            <div class="col-lg-8">
+              <textarea formControlName="included" class="form-control form-control-lg form-control-solid" placeholder="Included"></textarea>
+            </div>
+          </div>
+  
+          <div class="row mb-6">
+            <label class="col-lg-4 col-form-label fw-bold fs-6">Not Included</label>
+            <div class="col-lg-8">
+              <textarea formControlName="notIncluded" class="form-control form-control-lg form-control-solid" placeholder="Not Included"></textarea>
+            </div>
+          </div>
+  
+          <div class="row mb-6">
+            <label class="col-lg-4 col-form-label fw-bold fs-6">Images</label>
+            <div class="col-lg-8">
+              <input type="file" (change)="onFileChange($event)" accept=".png, .jpg, .jpeg" multiple>
+              <div *ngIf="fileNames.length > 0">
+                <p>Selected files:</p>
+                <ul>
+                  <li *ngFor="let fileName of fileNames">{{ fileName }}</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+  
+        <div class="card-footer d-flex justify-content-end py-6 px-9">
+          <button type="submit" class="btn btn-primary" [disabled]="isLoading">
+            <ng-container *ngIf="!isLoading">Save Changes</ng-container>
+            <ng-container *ngIf="isLoading">
+              <span class="indicator-progress" [style.display]="'block'">Please wait...<span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
+            </ng-container>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+  
+  <!-- Existing excursion details content -->
+  
+  <!-- begin::Price List -->
+  <div class="card">
+    <div class="card-header border-0 pt-5 position-relative">
+      <h3 class="card-title align-items-start flex-column">
+        <span class="card-label fw-bolder fs-3 mb-1 me-3">Prices List</span>
+      </h3>
+      <div class="position-absolute top-0 end-0 mt-10 me-20">
+        <a (click)="openPriceModal()" class="btn btn-sm btn-light-primary">
+          <span class="svg-icon svg-icon-3"></span>
+          Add Price
+        </a>
+      </div>
+    </div>
+    <div class="card-body py-3">
+      <div class="table-responsive">
+        <table #dataTable id="priceList" class="table align-middle gs-0 gy-4">
+          <thead>
+            <tr class="fw-bolder text-muted bg-light">
+              <th class="col-md-2">Start Date</th>
+              <th class="col-md-2">End Date</th>
+              <th class="col-md-3">Hotels</th>
+              <th class="col-md-2">Price</th>
+              <th class="col-md-3">Actions</th>
+            </tr>
+          </thead>
+          <tbody *ngIf="priceList.length > 0">
+            <tr *ngFor="let price of priceList; let i = index">
+              <td>{{ price.start_date }}</td>
+              <td>{{ price.end_date }}</td>
+              <td>{{ price.hotels }}</td>
+              <td>{{ price.price }}</td>
+              <td>
+                <div class="btn-group" role="group">
+                  <button type="button" class="btn btn-sm btn-light-primary" (click)="editPrice(i)">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                  </button>
+                  <button type="button" class="btn btn-sm btn-light-danger" (click)="deletePrice(i)">
+                    <i class="fa-solid fa-trash"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div *ngIf="error" class="alert alert-danger mt-3">
+        Error fetching price list: {{ error.message }}
+      </div>
+    </div>
+  </div>
+  

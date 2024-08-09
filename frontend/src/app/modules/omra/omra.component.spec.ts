@@ -6,12 +6,10 @@ describe('OmraComponent', () => {
   let component: OmraComponent;
   let fixture: ComponentFixture<OmraComponent>;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [OmraComponent]
-    })
-    .compileComponents();
-    
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      declarations: [OmraComponent]
+    });
     fixture = TestBed.createComponent(OmraComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

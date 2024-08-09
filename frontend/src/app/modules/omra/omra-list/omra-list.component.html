@@ -1,0 +1,78 @@
+<!-- begin::Card -->
+<div class="card">
+    <!-- begin::Header -->
+    <div class="card-header border-0 pt-5">
+      <h3 class="card-title align-items-start flex-column">
+        <span class="card-label fw-bolder fs-3 mb-1 me-3" style="padding-left: 2rem">{{ offerType | titlecase }} List</span>
+        <span class="text-muted mt-1 fw-bold fs-7 me-5" style="padding-left: 2rem">Over {{ filteredOffers.length }} new {{ offerType | titlecase }}s</span>
+      </h3>
+      <div class="card-toolbar">
+        <a (click)="openOfferModal()" class="btn btn-sm btn-light-primary">
+          <span class="svg-icon svg-icon-3"></span>
+          New {{ offerType | titlecase }}
+        </a>
+      </div>
+    </div>
+    <!-- end::Header -->
+  
+    <!-- begin::Body -->
+    <div class="card-body py-3">
+      <!-- begin::Table container -->
+      <div class="table-responsive">
+        <!-- begin::Table -->
+        <table #dataTable id="example" class="table align-middle gs-0 gy-4">
+          <!-- begin::Table head -->
+          <thead>
+            <tr class="fw-bolder text-muted bg-light">
+              <th class="ps-4 col-md-1 rounded-start">Image</th>
+              <th class="col-md-4">Title</th>
+              <th class="col-md-2">Destination</th>
+              <th class="col-md-3">Category</th>
+              <th class="col-md-2 rounded-end">Actions</th>
+            </tr>
+          </thead>
+          <!-- end::Table head -->
+          <!-- begin::Table body -->
+          <tbody *ngIf="filteredOffers.length > 0">
+            <tr *ngFor="let offer of filteredOffers">
+              <td class="col-md-1 rounded-start ps-4">
+                <div class="symbol me-5">
+                  <img src="{{backendUrl}}/uploads/{{ offer.banner }}" alt="{{ offer.name }}" />
+                </div>
+              </td>
+              <td class="col-md-4">
+                <a href="#" class="text-gray-900 fw-bolder text-hover-primary">{{ offer.name }}</a>
+              </td>
+              <td class="col-md-2">
+                <span class="text-muted fw-bold d-block ps-4">{{ offer.destination.name }}</span>
+              </td>
+              <td class="col-md-3">
+                <span class="text-muted fw-bold d-block" *ngFor="let category of offer.categories">{{ category.name }}</span>
+              </td>
+              <td class="text-end col-md-2" style="padding-right: 8rem;">
+                <div class="btn-group" role="group">
+                  <a (click)="viewDetails(offer.id)" class="btn btn-sm btn-light-primary">
+                    <i class="fa-solid fa-pen-to-square fa-light-primary"></i>
+                  </a>                
+                  <a (click)="openConfirmDialog(offer)" class="btn btn-sm btn-light-danger">
+                    <i class="fa-solid fa-trash"></i>
+                  </a>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+          <!-- end::Table body -->
+        </table>
+        <!-- end::Table -->
+      </div>
+      <!-- end::Table container -->
+  
+      <!-- Error message display -->
+      <div *ngIf="error" class="alert alert-danger mt-3">
+        Error fetching offers: {{ error.message }}
+      </div>
+    </div>
+    <!-- end::Body -->
+  </div>
+  <!-- end::Card -->
+  

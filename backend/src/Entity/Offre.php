@@ -10,6 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\InheritanceType('JOINED')]
+#[Groups(["offre:read", "offre:write"])]
 #[ORM\DiscriminatorColumn(name: 'type', type: 'string')]
 #[ORM\DiscriminatorMap([
     'excursion' => Excursion::class,
@@ -292,11 +293,14 @@ class Offre
         return $this;
     }
 
+    #[Groups(["offre:read"])]
+
     public function getDestination(): ?destination
     {
         return $this->destination;
     }
 
+    
     public function setDestination(?destination $destination): static
     {
         $this->destination = $destination;
@@ -339,6 +343,8 @@ class Offre
 
         return $this;
     }
+
+    #[Groups(["offre:read"])]
     public function getType(): string
 {
     return (new \ReflectionClass($this))->getShortName();
