@@ -2,9 +2,11 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { AuthComponent } from './auth.component';
 import { LoginComponent } from './components/login/login.component';
-import { RegistrationComponent } from './components/registration/registration.component';
+import { ClientRegistrationComponent } from './components/clientRegistration/clientRegistration.component';
 import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
 import { LogoutComponent } from './components/logout/logout.component';
+import { AgencyRegisterComponent } from './components/agency-register/agency-register.component';
+import { SignupComponent } from './components/signup/signup.component';
 
 const routes: Routes = [
   {
@@ -22,8 +24,16 @@ const routes: Routes = [
         data: { returnUrl: window.location.pathname },
       },
       {
-        path: 'registration',
-        component: RegistrationComponent,
+        path: 'clientRegistration',
+        component: ClientRegistrationComponent,
+      },
+      {
+        path: 'signup',
+        component: SignupComponent,
+      },
+      {
+        path: 'agencyRegistration',
+        component: AgencyRegisterComponent,
       },
       {
         path: 'forgot-password',

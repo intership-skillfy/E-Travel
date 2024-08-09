@@ -19,6 +19,8 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Exception\BadCredentialsException;
 use App\Service\RefreshTokenService;
 use OpenApi\Attributes as OA;
+use Psr\Log\LoggerInterface;
+
 
 class AuthController extends AbstractController
 {
@@ -45,23 +47,51 @@ class AuthController extends AbstractController
     )]
 
 
-
-    public function register(Request $request, UserPasswordHasherInterface $passwordHasher, EntityManagerInterface $entityManager, JWTTokenManagerInterface $jwtManager, UserRepository $userRepository, RefreshTokenService $refreshTokenService,FileUploader $fileUploader): JsonResponse
-    {
-        $data = $request->request->all();
+    public function register(
+        Request $request, 
+        UserPasswordHasherInterface $passwordHasher, 
+        EntityManagerInterface $entityManager, 
+        JWTTokenManagerInterface $jwtManager, 
+        UserRepository $userRepository, 
+        RefreshTokenService $refreshTokenService,
+        FileUploader $fileUploader,
+        LoggerInterface $logger
+    ): JsonResponse {
+        
+        $rawContent = $request->getContent();
+        $logger->info('Raw request content', ['content' => $rawContent]);
+    
+        // Check if there's JSON data in the 'json' field of the request
+        $jsonData = $request->request->get('json');
+        if ($jsonData) {
+            $data = json_decode($jsonData, true);
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                $logger->error('JSON decode error', ['error' => json_last_error_msg(), 'content' => $jsonData]);
+                return new JsonResponse(['message' => 'Invalid JSON data.'], Response::HTTP_BAD_REQUEST);
+            }
+        } else {
+            // If no JSON data, use the request data directly
+            $data = $request->request->all();
+        }
+    
+    
+       $logger->info('Decoded registration data', $data);
+    
         $role = $data['role'] ?? null;
-
+    
         // Validate the presence of email, password, and role
-        if (!$data['email'] || !$data['password'] || !$role) {
+        if (empty($data['email']) || empty($data['password']) || !$role) {
+           $logger->error('Missing email, password, or role', $data);
             return new JsonResponse(['message' => 'Email, password, and role are required.'], Response::HTTP_BAD_REQUEST);
         }
-
+    
         // Check if the email already exists
         $existingUser = $userRepository->findOneBy(['email' => $data['email']]);
         if ($existingUser) {
+           $logger->error('Email address already exists', ['email' => $data['email']]);
             return new JsonResponse(['message' => 'Email address already exists.'], Response::HTTP_CONFLICT);
         }
-
+    
         // Create the appropriate entity based on the role
         if ($role === 'ROLE_ADMIN') {
             $user = new Admin();
@@ -71,44 +101,50 @@ class AuthController extends AbstractController
                 $profilePic = $fileUploader->upload($request->files->get('profilePic'));
                 $user->setProfilePic($profilePic);
             }
-            $user->setPhone($data['phone']);
-            $user->setPreferences($data['preferences']);
+            $user->setPhone($data['phone'] ?? '');
         } elseif ($role === 'ROLE_AGENCY') {
             $user = new Agency();
             if ($request->files->has('logoUrl')) {
                 $logoUrl = $fileUploader->upload($request->files->get('logoUrl'));
                 $user->setLogoUrl($logoUrl);
             }
-            $user->setPhone($data['phone']);
-            $user->setAddresse($data['addresse']);
-            $user->setWebsite($data['website']);
+            $user->setPhone($data['phone'] ?? '');
+            $user->setAddresse($data['addresse'] ?? '');
+            $user->setWebsite($data['website'] ?? '');
         } else {
+           $logger->error('Invalid role', ['role' => $role]);
             return new JsonResponse(['message' => 'Invalid role'], Response::HTTP_BAD_REQUEST);
         }
-
+    
         $user->setEmail($data['email']);
         $user->setName($data['name']);
         $user->setPassword($passwordHasher->hashPassword($user, $data['password']));
         $user->setRoles([$role]);
-
+    
         $entityManager->persist($user);
         $entityManager->flush();
-
+    
         // Generate JWT token
         try {
             $token = $jwtManager->create($user);
             $refreshToken = $refreshTokenService->createRefreshToken($user);
-
+           $logger->info('JWT token created successfully', ['token' => $token]);
         } catch (BadCredentialsException $e) {
+           $logger->error('Failed to create JWT token', ['exception' => $e->getMessage()]);
             return new JsonResponse(['message' => 'Failed to create JWT token.'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
-
+    
+       $logger->info('User created successfully', ['user' => $user->getEmail()]);
+    
         return new JsonResponse([
             'message' => 'User created successfully !',
             'token' => $token,
             'refreshToken' => $refreshToken
         ], Response::HTTP_CREATED);
     }
+    
+    
+    
 
     #[Route('/api/login', name: 'app_auth_login', methods: ['POST'])]
     #[OA\Post(
@@ -135,7 +171,7 @@ class AuthController extends AbstractController
 
     )]
 
-    public function login(Request $request, UserPasswordHasherInterface $passwordHasher, JWTTokenManagerInterface $jwtManager, UserRepository $repository,RefreshTokenService $refreshTokenService): JsonResponse
+    public function login(Request $request, UserPasswordHasherInterface $passwordHasher, JWTTokenManagerInterface $jwtManager, UserRepository $repository, RefreshTokenService $refreshTokenService): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
 

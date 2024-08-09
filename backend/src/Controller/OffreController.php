@@ -11,6 +11,7 @@ use App\Entity\Omra;
 use App\Entity\Trip;
 use App\Entity\Offre;
 use App\Repository\OffreRepository;
+use App\Service\FileUploader;
 use App\Service\SerializerService;
 use Doctrine\ORM\EntityManagerInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
@@ -23,8 +24,7 @@ use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use OpenApi\Attributes as OA;
-use App\Service\FileUploader;
-
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 use function Symfony\Component\DependencyInjection\Loader\Configurator\param;
 
@@ -61,12 +61,12 @@ class OffreController extends AbstractController
     public function new(Request $request, FileUploader $fileUploader): JsonResponse
     {
         $type = $request->query->get('type');
-        
+ 
         // Check if the request is multipart/form-data
         if ($request->isMethod('POST') && $request->getContentType() === 'form') {
             $data = $request->request->all(); // Retrieves form data
             $files = $request->files->all(); // Retrieves uploaded files
-            dd($files);
+            // dd($request->files->all());
             // Validate required fields
             $requiredFields = ['name', 'agency_id', 'categories', 'destination'];
             foreach ($requiredFields as $field) {
@@ -74,12 +74,12 @@ class OffreController extends AbstractController
                     return new JsonResponse("The $field field is required", JsonResponse::HTTP_BAD_REQUEST);
                 }
             }
-    
+ 
             $offre = $this->createOffreByType($type);
             $offre->setName($data['name'] ?? '');
             $offre->setDescription($data['description'] ?? null);
             $offre->setDetailedDescription($data['detailedDescription'] ?? null);
-    
+ 
             // Handle banner upload
             if ($request->files->has('banner')) {
                 $bannerFile = $request->files->get('banner');
@@ -88,57 +88,57 @@ class OffreController extends AbstractController
                     $offre->setBanner($bannerFileName);
                 }
             }
-    
-            // Handle images upload
-            if ($request->files->has('images')) {
-                $imagesFiles = $request->files->get('images');
-                if (is_array($imagesFiles)) {
-                    $uploadedImages = [];
-                    foreach ($imagesFiles as $imageFile) {
-                        if ($imageFile instanceof UploadedFile) {
-                            $uploadedImages[] = $fileUploader->upload($imageFile);
-                        }
+ 
+          // Handle images upload
+        if ($request->files->has('images')) {
+            $imagesFiles = $request->files->get('images');
+            dd($imagesFiles);
+            if (is_array($imagesFiles)) {
+                $uploadedImages = [];
+                foreach ($imagesFiles as $imageFile) {
+                    if ($imageFile instanceof UploadedFile) {
+                        $uploadedImages[] = $fileUploader->upload($imageFile);
                     }
-                    $offre->setImages($uploadedImages);
                 }
+                $offre->setImages($uploadedImages);
             }
-    
+        }
+ 
             $offre->setStartDate(new \DateTimeImmutable($data['startDate']));
             $offre->setEndDate(new \DateTimeImmutable($data['endDate']));
             $offre->setIncluded($data['included'] ?? null);
             $offre->setNoIncluded($data['noIncluded'] ?? null);
-    
+ 
             $agency = $this->entityManager->getRepository(Agency::class)->find($data['agency_id']);
             if (!$agency) {
                 return new JsonResponse('Invalid agency ID', JsonResponse::HTTP_BAD_REQUEST);
             }
             $offre->setAgency($agency);
-    
+ 
             if (isset($data['categories'])) {
                 $categories = $this->entityManager->getRepository(Category::class)->findBy(['id' => $data['categories']]);
                 foreach ($categories as $category) {
                     $offre->addCategory($category);
                 }
             }
-    
+ 
             $destination = $this->entityManager->getRepository(Destination::class)->find($data['destination']);
             if (!$destination) {
                 return new JsonResponse('Invalid destination ID', JsonResponse::HTTP_BAD_REQUEST);
             }
             $offre->setDestination($destination);
-    
+ 
             // Set additional fields based on type
             $this->setAdditionalFields($offre, $data);
-    
+ 
             $this->entityManager->persist($offre);
             $this->entityManager->flush();
-    
+ 
             return new JsonResponse(['message' => 'Offre created successfully!']);
         } else {
             return new JsonResponse('Invalid request type or content type', JsonResponse::HTTP_BAD_REQUEST);
         }
     }
-
     #[Route('/{id}', name: 'api_offre_show', methods: ['GET'])]
     #[OA\Tag(name: 'Offer')]
     #[OA\Parameter(
