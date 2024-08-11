@@ -4,7 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { PriceModalComponent } from '../price-modal/price-modal.component';
 import { environment } from 'src/environments/environment';
-import { ExcursionsService } from 'src/app/services/excursion/excursions.service';
+import { OffersService} from 'src/app/services/offer/offers.service';
 
 declare var $: any;
 
@@ -29,7 +29,7 @@ export class OmraDetailsComponent implements OnInit, AfterViewInit {
   @ViewChild('dataTable', { static: false }) tableElement: ElementRef;
 
   constructor(
-    private excursionsService: ExcursionsService,
+    private offersService: OffersService,
     private route: ActivatedRoute,
     private fb: FormBuilder,
     private ngbModal: NgbModal
@@ -70,8 +70,7 @@ export class OmraDetailsComponent implements OnInit, AfterViewInit {
 
   fetchOfferDetails() {
     if (this.currentOfferId != null) {
-      if (this.currentOfferType === 'excursion') {
-        this.excursionsService.getOfferById(this.currentOfferId).subscribe({
+        this.offersService.getOfferById(this.currentOfferId).subscribe({
           next: (data: any) => {
             this.form.patchValue(data);
             this.priceList = data.pricesList || [];
@@ -81,10 +80,6 @@ export class OmraDetailsComponent implements OnInit, AfterViewInit {
             console.error('Error fetching offer details:', e);
           }
         });
-      } else if (this.currentOfferType === 'omra') {
-        // Handle 'omra' offer type if needed
-      }
-      // Add other offer types as needed
     }
   }
 
@@ -213,7 +208,7 @@ export class OmraDetailsComponent implements OnInit, AfterViewInit {
       const offerData = this.form.value;
 
       if (this.currentOfferType === 'excursion') {
-        this.excursionsService.updateOffer(this.currentOfferId, offerData).subscribe({
+        this.offersService.updateOffer(this.currentOfferId, offerData).subscribe({
           next: (response) => {
             console.log('Offer updated successfully:', response);
             this.isLoading = false;

@@ -8,10 +8,7 @@ import { OffersComponent } from './offers.component';
 import { TripsComponent } from './trips/trips.component';
 import { HikingComponent } from './hiking/hiking.component';
 import { ExcursionsPageComponent } from './excursions-page/excursions-page.component';
-import { ExcursionsModule } from 'src/app/modules/excursions/excursions.module';
 import { WidgetsModule } from "../../_metronic/partials/content/widgets/widgets.module";
-import { AddOfferComponent } from './forms/add-offer/add-offer.component';
-import { FormsModule } from '@angular/forms';
 import { OmraPageComponent } from './omra-page/omra-page.component';
 import { OmraModule } from 'src/app/modules/omra/omra.module';
 
@@ -21,7 +18,6 @@ import { OmraModule } from 'src/app/modules/omra/omra.module';
     TripsComponent,
     HikingComponent,
     ExcursionsPageComponent,
-    AddOfferComponent,
     OmraPageComponent,
   ],
   imports: [
@@ -29,9 +25,7 @@ import { OmraModule } from 'src/app/modules/omra/omra.module';
     ReactiveFormsModule,
     NgbTooltipModule,
     OffersRoutingModule,
-    ExcursionsModule, 
     WidgetsModule,
-    FormsModule,
     OmraModule
   ],
 })

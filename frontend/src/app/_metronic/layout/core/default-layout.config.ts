@@ -185,7 +185,7 @@ export const DefaultLayoutConfig: ILayout = {
   },
   aside: {
     componentName: 'aside',
-    display: false,
+    display: true,
     theme: 'dark',
     menu: 'main',
     fixed: true,

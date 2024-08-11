@@ -10,8 +10,8 @@
           <div class="row mb-6">
             <label class="col-lg-4 col-form-label fw-bold fs-6">Banner</label>
             <div class="col-lg-8">
-              <div class="image-input image-input-outline" data-kt-image-input="true" [style.background-image]="'url(./assets/media/avatars/blank.png)'">
-                <div class="image-input-wrapper w-125px h-125px" [style.background-image]="getBannerStyle()"></div>
+              <div class="image-input image-input-outline" data-kt-image-input="true" style.background-image="{{backendUrl}}/uploads/{{form.get('banner')}}">
+                <div class="image-input-wrapper w-125px h-125px"></div>
                 <input type="file" (change)="onBannerChange($event)" accept=".png, .jpg, .jpeg">
               </div>
             </div>

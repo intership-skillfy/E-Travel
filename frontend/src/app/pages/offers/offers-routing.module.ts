@@ -4,7 +4,6 @@ import { ExcursionsPageComponent } from "./excursions-page/excursions-page.compo
 import { HikingComponent } from "./hiking/hiking.component";
 import { TripsComponent } from "./trips/trips.component";
 import { OffersComponent } from './offers.component';
-import { ExcursionDetailsComponent } from 'src/app/modules/excursions/excursion-details/excursion-details.component';
 import { OmraPageComponent } from './omra-page/omra-page.component';
 import { OmraDetailsComponent } from 'src/app/modules/omra/omra-details/omra-details.component';
 const routes: Routes = [

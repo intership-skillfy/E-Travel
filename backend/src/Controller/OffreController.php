@@ -90,18 +90,20 @@ class OffreController extends AbstractController
             }
  
           // Handle images upload
-        if ($request->files->has('images')) {
-            $imagesFiles = $request->files->get('images');
-            dd($imagesFiles);
-            if (is_array($imagesFiles)) {
+          $imagesFiles = $request->query->get('images');
+        if ($imagesFiles) {
+            
+           // dd($imagesFiles);
+           // if (is_array($imagesFiles)) {
                 $uploadedImages = [];
-                foreach ($imagesFiles as $imageFile) {
+                foreach ($imagesFiles as $image) {
+                    $imagesFile = $request->files->get($image);
                     if ($imageFile instanceof UploadedFile) {
                         $uploadedImages[] = $fileUploader->upload($imageFile);
                     }
                 }
                 $offre->setImages($uploadedImages);
-            }
+           // }
         }
  
             $offre->setStartDate(new \DateTimeImmutable($data['startDate']));

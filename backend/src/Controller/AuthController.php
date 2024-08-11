@@ -20,10 +20,24 @@ use Symfony\Component\Security\Core\Exception\BadCredentialsException;
 use App\Service\RefreshTokenService;
 use OpenApi\Attributes as OA;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Security\Core\Security;
+
 
 
 class AuthController extends AbstractController
 {
+    #[Route('/api/currentUser', name: 'me', methods: ['GET'])]
+    public function me(Security $security): JsonResponse
+    {   
+        $currentUser = $security->getUser();
+
+        return new JsonResponse([
+            'id' => $currentUser?->getId(),
+            'email' => $currentUser?->getEmail(),
+        ]);
+
+    }
+
     #[Route('api/register', name: 'app_auth_register', methods: ['POST'])]
     #[OA\Post(
         path: "/api/register",
@@ -45,8 +59,6 @@ class AuthController extends AbstractController
 
         ),
     )]
-
-
     public function register(
         Request $request, 
         UserPasswordHasherInterface $passwordHasher, 
@@ -142,9 +154,6 @@ class AuthController extends AbstractController
             'refreshToken' => $refreshToken
         ], Response::HTTP_CREATED);
     }
-    
-    
-    
 
     #[Route('/api/login', name: 'app_auth_login', methods: ['POST'])]
     #[OA\Post(
@@ -153,7 +162,6 @@ class AuthController extends AbstractController
         summary: "Login to the platform",
 
     )]
-
     #[OA\RequestBody(
         required: true,
         description: "User login data",
@@ -166,11 +174,7 @@ class AuthController extends AbstractController
             ]
 
         ),
-
-
-
     )]
-
     public function login(Request $request, UserPasswordHasherInterface $passwordHasher, JWTTokenManagerInterface $jwtManager, UserRepository $repository, RefreshTokenService $refreshTokenService): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
@@ -199,8 +203,10 @@ class AuthController extends AbstractController
 
         // Return token to the client
         return new JsonResponse([
-            'token' => $token,
-            'refresh_token' => $refreshToken
+            'authToken' => $token,
+            'refreshToken' => $refreshToken,
+            'expiresIn' => 3600,
+            'email' => $data['email']
         ], Response::HTTP_OK);
     }
 

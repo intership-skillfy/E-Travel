@@ -6,12 +6,14 @@ import { environment } from 'src/environments/environment';
 @Injectable({
   providedIn: 'root',
 })
-export class ExcursionsService {
+export class OffersService {
   private apiUrl = `${environment.apiUrl}/api/offres`;
 
   constructor(private http: HttpClient) {}
 
-  
+  createOffer(offerData: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/new`, offerData);
+  }
 
   getOffersByType(type: string): Observable<any> {
     const params = new HttpParams().set('type', type);

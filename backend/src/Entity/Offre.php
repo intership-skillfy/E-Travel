@@ -293,14 +293,11 @@ class Offre
         return $this;
     }
 
-    #[Groups(["offre:read"])]
-
     public function getDestination(): ?destination
     {
         return $this->destination;
     }
 
-    
     public function setDestination(?destination $destination): static
     {
         $this->destination = $destination;

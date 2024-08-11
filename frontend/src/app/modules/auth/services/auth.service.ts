@@ -17,7 +17,7 @@ export class AuthService implements OnDestroy {
   // private fields
   private unsubscribe: Subscription[] = []; // Read more: => https://brianflove.com/2016/12/11/anguar-2-unsubscribe-observables/
   private authLocalStorageToken = `${environment.appVersion}-${environment.USERDATA_KEY}`;
-  private apiUrl = 'http://localhost:8000/api';
+  private apiUrl = 'https://localhost:8000/api';
 
   // public fields
   currentUser$: Observable<UserType>;
@@ -50,22 +50,33 @@ export class AuthService implements OnDestroy {
   login(email: string, password: string): Observable<UserType> {
     this.isLoadingSubject.next(true);
     return this.http.post<any>(`${this.apiUrl}/login`, { email, password }).pipe(
-      map((response: any) => {
-        if (response.token && response.refresh_token) {
-          this.setAuthFromLocalStorage(response.token);
-          const user = new UserModel();
-          user.email = email;
-          this.currentUserSubject.next(user);
-          localStorage.setItem('currentUser', JSON.stringify(user));
-          return user;
-        }
-        return undefined;
+      map((auth: AuthModel) => {
+        console.log(auth)
+        const result = this.setAuthFromLocalStorage(auth);
+        return result;
       }),
+      switchMap(() => this.getUserByToken()),
       catchError((err) => {
-        console.error('Error during login:', err);
+        console.error('err', err);
         return of(undefined);
       }),
       finalize(() => this.isLoadingSubject.next(false))
+      // map((response: any) => {
+      //   if (response.token && response.refresh_token) {
+      //     this.setAuthFromLocalStorage(response.token);
+      //     const user = new UserModel();
+      //     user.email = email;
+      //     this.currentUserSubject.next(user);
+      //     localStorage.setItem('currentUser', JSON.stringify(user));
+      //     return user;
+      //   }
+      //   return undefined;
+      // }),
+      // catchError((err) => {
+      //   console.error('Error during login:', err);
+      //   return of(undefined);
+      // }),
+      // finalize(() => this.isLoadingSubject.next(false))
     );
   }
 
@@ -82,10 +93,12 @@ export class AuthService implements OnDestroy {
     if (!auth || !auth.authToken) {
       return of(undefined);
     }
+    console.log(auth)
 
     this.isLoadingSubject.next(true);
-    return this.authHttpService.getUserByToken(auth.authToken).pipe(
+    return this.http.get<UserModel>(`${this.apiUrl}/currentUser`).pipe(
       map((user: UserType) => {
+        console.log(user)
         if (user) {
           this.currentUserSubject.next(user);
         } else {
